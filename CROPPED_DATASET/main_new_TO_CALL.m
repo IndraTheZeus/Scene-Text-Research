@@ -1,0 +1,1 @@
+ExcelBatchFormation('D:\Indra-scene-text-research-one\CROPPED_DATASET\BoundingBoxImages\','D:\Indra-scene-text-research-one\CROPPED_DATASET\ExtractedRegion\','jpg','xlsx')
