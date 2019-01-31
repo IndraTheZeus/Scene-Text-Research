@@ -4,7 +4,7 @@ function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext)
 disp('WAIT! Execution begining...');
 
 append_mode = true;
-output_filename = "D:\Indra-scene-text-research-one\Scene-Text-Research-ONE\test_output\Reduced_StabilityFeatures(0.2,0.25).xlsx";
+output_filename = "D:\Indra-scene-text-research-one\Scene-Text-Research\Scene-Text-Research-ONE\test_output\StabilityFeatures(0.2,0.25).xlsx";
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
@@ -28,7 +28,7 @@ for i = 1:num_pages
     
     % load the image from the directory
     img = imread(strcat(dir_in,file_names{i}));
-    excel_file_names
+    excel_file_names{i}
   
     if numel(excel_file_names)~= 0 
         filename = strcat(dir_in,strcat("/",excel_file_names{i}));
@@ -60,8 +60,6 @@ end
         Prev = xlsread(output_filename);
 %         Prev
         Data = [FeatureLabel FeatureSet];
-        Primary = Data(:,1:15);
-        Data = Data(~all(Primary==0,2),:);
 %         Data
 
         if size(Prev,2) ~= size(Data,2)
@@ -75,9 +73,7 @@ end
        
      else
         fprintf("\nWriting New Data....\n");
-        Data = [FeatureLabel FeatureSet]; 
-        Primary = Data(:,1:15);
-        Data = Data(~all(Primary==0,2),:);
+        Data = [FeatureLabel FeatureSet];
 %         Data
         xlswrite(output_filename,Data); 
 
