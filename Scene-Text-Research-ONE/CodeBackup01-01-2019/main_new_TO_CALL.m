@@ -1,0 +1,1 @@
+batchFormation('E:\ResearchFiles\test_input\','E:\ResearchFiles\test_output\','png')
