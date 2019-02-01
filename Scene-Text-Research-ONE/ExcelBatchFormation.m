@@ -4,7 +4,7 @@ function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext)
 disp('WAIT! Execution begining...');
 
 append_mode = true;
-output_filename = "D:\Indra-scene-text-research-one\Scene-Text-Research\Scene-Text-Research-ONE\test_output\StabilityFeatures(0.2,0.25).xlsx";
+output_filename = strcat(dir_results,"StabilityFeatures(0.2,0.25).xlsx");
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
