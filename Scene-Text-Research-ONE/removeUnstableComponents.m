@@ -1,8 +1,9 @@
-function [StableImages] = removeUnstableComponents(BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,No_of_features)
+function [StableImages] = removeUnstableComponents(BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,No_of_features)
 
 StableImages = false(size(BinImages));
-[row,col,NumImages] = size(BinImages);
-output_img = false(row,col);
+[row,col,NUM_BIN_IMAGES] = size(BinImages);
+
+output_image = false(row,col);
 q_offset = 0;  
          for i = 1:8 %Must change Loop for change in Bin
 
@@ -11,7 +12,7 @@ q_offset = 0;
    
     %For 1st Level Bins
        for img_no = (q_offset+1):(q_offset+main_offset)
-         output_img(:,:) = 0;
+         output_image(:,:) = 0;
         if img_no ~= (q_offset+main_offset)
           scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset)));
         else

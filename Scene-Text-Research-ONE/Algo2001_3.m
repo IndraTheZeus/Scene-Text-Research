@@ -13,7 +13,7 @@
  [row,col,~] = size(image);
  
   BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
- 
+  StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
  rgb_BinImages = false(row,col,NUM_BIN_IMAGES);
  
  
@@ -79,10 +79,11 @@
     rgb_SUImages = rgb_BinImages;
  else
      stage = 2
-    rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
+     rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12); %CHANGE FOR CHANGE IN PRIMARY FEATURES
+%     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
     stage = 3;
     if stage>end_stage
-        rgb_SUImages = rgb_UImages;
+        rgb_SUImages = rgb_StableImages;
     else
         stage = 3;
         rgb_SUImages = Stabilize_2Level(rgb_UImages,BinSizes,MAX_DISTANCE);

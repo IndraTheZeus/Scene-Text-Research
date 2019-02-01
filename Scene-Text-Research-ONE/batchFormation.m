@@ -14,7 +14,7 @@ num_pages = length(file_names);
 fprintf('Total number of pages = %d\n', num_pages);
 
 % process all pages in the directory
-for i = 1:1   %%CONVERT TO 1:1 
+for i = 1:num_pages  %%CONVERT TO 1:1 
   %if((i>=120)&&(i<125))  
  
 %    fprintf('Processing page No: %d\n', i);  %%Commented out,reading done by load data  
@@ -22,7 +22,7 @@ for i = 1:1   %%CONVERT TO 1:1
 %    %% load the image from the directory
 %  
 %     
-%    img = imread(strcat(dir_in,file_names{i}));   %% Commented out reading
+    img = imread(strcat(dir_in,file_names{i}));   %% Commented out reading
 %                                                     %% as reading Done by LoadData
 %  
     
@@ -32,10 +32,10 @@ for i = 1:1   %%CONVERT TO 1:1
     %[img,mask,inpainted_img,normalised3] = main_function(img);
  %   [finalA,NumImages] = Algo2001_3(img,1);
    
- %[rgb_SUImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3(img,2); 
+ [finalA,NumImages,~,~] = Algo2001_3(img,2); 
  
  
- [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
+%  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
  
  
 %    finalA = findInterestRegions(img);
