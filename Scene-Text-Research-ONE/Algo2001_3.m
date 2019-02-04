@@ -1,4 +1,4 @@
- function [rgb_SUImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3( image,end_stage )
+ function [rgb_SUImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3( image,end_stage,StabilityPredictor )
   %reduced = 186;
  
  
@@ -79,13 +79,13 @@
     rgb_SUImages = rgb_BinImages;
  else
      stage = 2
-     rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12); %CHANGE FOR CHANGE IN PRIMARY FEATURES
+     rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
 %     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
     stage = 3;
     if stage>end_stage
         rgb_SUImages = rgb_StableImages;
     else
-        stage = 3;
+        stage = 3
         rgb_SUImages = Stabilize_2Level(rgb_UImages,BinSizes,MAX_DISTANCE);
     end
  end

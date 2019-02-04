@@ -17,7 +17,7 @@ function [output_images] = ReduceToMainCCs(rgb_BinImages)
         
         for comp_no = 1:CCimg.NumObjects
            
-            if max(stat(comp_no).BoundingBox(3),stat(comp_no).BoundingBox(4)) > min_size_threshold && numel(CCimg.PixelIdxList{comp_no}) > min_vol_threshold && numel(CCimg.PixelIdxList{comp_no}) > pixel_percent_threshold*(row*col)
+            if max(stat(comp_no).BoundingBox(3),stat(comp_no).BoundingBox(4)) > min_size_threshold && numel(CCimg.PixelIdxList{comp_no}) > min_vol_threshold %&& numel(CCimg.PixelIdxList{comp_no}) > pixel_percent_threshold*(row*col)
                 temp_img(CCimg.PixelIdxList{comp_no}) = 1; 
             end
             

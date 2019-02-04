@@ -1,4 +1,4 @@
-function [StableImages] = removeUnstableComponents(BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,No_of_features)
+function [StableImages] = removeUnstableComponents(BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,No_of_features,StabilityPredictor)
 
 StableImages = false(size(BinImages));
 [row,col,NUM_BIN_IMAGES] = size(BinImages);
@@ -166,7 +166,7 @@ q_offset = 0;
         FeatureValues(1,8) = (abs(upper_check_stats(upper_range_overlap_comp(1,1)).Solidity - stats(comp).Solidity))/ stats(comp).Solidity;
         
 
-        [isStable] = PredictStability(FeatureValues);
+        [isStable] = PredictStability(FeatureValues,StabilityPredictor);
         
         if isStable
             output_image(CC_scan_img.PixelIdxList{comp}) = true;
@@ -312,7 +312,7 @@ q_offset = 0;
         FeatureValues(1,8) = (abs(upper_check_stats(upper_range_overlap_comp(1,1)).Solidity - stats(comp).Solidity))/ stats(comp).Solidity;
         
 
-        [isStable] = PredictStability(FeatureValues);
+        [isStable] = PredictStability(FeatureValues,StabilityPredictor);
         
         if isStable
             output_image(CC_scan_img.PixelIdxList{comp}) = true;
