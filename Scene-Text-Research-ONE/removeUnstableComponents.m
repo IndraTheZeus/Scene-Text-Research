@@ -4,8 +4,8 @@ StableImages = false(size(BinImages));
 [row,col,NUM_BIN_IMAGES] = size(BinImages);
 
 output_image = false(row,col);
-q_offset = 0;  
-         for i = 1:8 %Must change Loop for change in Bin
+q_offset = 41;  
+         for i = 2:8 %Must change Loop for change in Bin
 
         main_offset = ceil(MAX_DISTANCE/BinSizes(i));
        k = ceil((BinSizes(i)/2)) -1;
