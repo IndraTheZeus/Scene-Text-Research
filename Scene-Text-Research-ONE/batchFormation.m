@@ -39,7 +39,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  for sc = 1:NumImages
      fprintf("\nScaling Components in Image No. %d",sc);
      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-     label = max(scaled_final_img(f_neighbors));
+     label = max(scaled_final_img(f_neighbors))+sc;
     
     scaled_final_img(finalA(:,:,sc)) = scaled_final_img(finalA(:,:,sc)) + label;
  end
@@ -50,7 +50,8 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  display_img = mat2gray(scaled_final_img);
  figure
  imshow(display_img)
- NumImages = 1;
+ display_img = finalA;
+ %NumImages = 1;
 %  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
  
  
