@@ -37,7 +37,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  
  for sc = 1:NumImages
-     fprintf("\nScaling Components in Image No. %d",sc);
+     fprintf("\nScaling Components in Bin No. %d",sc);
      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
      label = max(scaled_final_img(f_neighbors))+sc;
     
