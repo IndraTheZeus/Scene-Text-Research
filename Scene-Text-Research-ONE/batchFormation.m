@@ -34,12 +34,12 @@ for i = 1:num_pages  %%CONVERT TO 1:1
    
  [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
  
- scaled_final_img = zeros(size(finalA,1),size(finalA,2));
+ scaled_final_img = ones(size(finalA,1),size(finalA,2));
  
  for sc = 1:NumImages
      fprintf("\nScaling Components in Bin No. %d",sc);
      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-     label = max(scaled_final_img(f_neighbors))+sc;
+     label = max(max(scaled_final_img(f_neighbors)))+sc;
     
     scaled_final_img(finalA(:,:,sc)) = scaled_final_img(finalA(:,:,sc)) + label;
  end
@@ -47,11 +47,16 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 %  figure
 %  imagesc(scaled_final_img)
  %The display img is the one displayed
- display_img = mat2gray(scaled_final_img);
+ show_img = logical(scaled_final_img);
+ imshow(show_img)
+ imwrite(show_img,strcat("BinCombined_",strcat(strrep(file_names{i},strcat('.',file_ext),''),'.bmp'),'bmp'));
  figure
- imshow(display_img)
-%  display_img = finalA;
- NumImages = 1;
+image(scaled_final_img)
+%  figure
+%  imshow(display_img)
+ savefig(strrep("RegionsFigure_",file_names{i},".fig"))
+  display_img = finalA;
+
 %  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
  
  
@@ -85,7 +90,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 
    for j=(1:NumImages)
        F_img = display_img(:,:,j);
-    name = strrep(file_names{i},strcat('.',out_ext),'');
+    name = strrep(file_names{i},strcat('.',file_ext),'');
     %name1=strcat(name,'_1img');
     %name2=strcat(name,'_2mask');
     name3=strcat(name,'_');
@@ -95,13 +100,13 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     % create a directory with the file name with the extension    
     %saveFile1=strcat(dir_results,name1,'.bmp');
     %saveFile2=strcat(dir_results,name2,'.bmp');
-    saveFile3=strcat(dir_results,name3,'.bmp');
+    saveFile3=strcat(dir_results,name3,'.jpg');
     %saveFile4=strcat(dir_results,name4,'.bmp');
     
     % save output images
     %imwrite(img,saveFile1,'bmp');    
     %imwrite(mask,saveFile2,'bmp');
-    imwrite(F_img,saveFile3,'bmp');
+    imwrite(F_img,saveFile3,'jpg');
     %imwrite(normalised3,saveFile4,'bmp');
    end
     

@@ -80,7 +80,7 @@
     q_offset = q_offset+2*main_offset-1;
  end
  
- fprintf("\nRemoving Unncessary Components");
+ fprintf("\n.....Removing Unncessary Components.....");
  rgb_BinImages = ReduceToMainCCs(rgb_BinImages);   % Remove small points
  
  stage = 2;
