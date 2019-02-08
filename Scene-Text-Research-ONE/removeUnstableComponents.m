@@ -6,12 +6,13 @@ StableImages = false(size(BinImages));
 output_image = false(row,col);
 q_offset = 41;  
          for i = 2:8 %Must change Loop for change in Bin
-
+         
         main_offset = ceil(MAX_DISTANCE/BinSizes(i));
        k = ceil((BinSizes(i)/2)) -1;
    
     %For 1st Level Bins
        for img_no = (q_offset+1):(q_offset+main_offset)
+         fprintf("\nProcessing Image: %d",img_no);
          output_image(:,:) = 0;
         if img_no ~= (q_offset+main_offset)
           scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset)));
@@ -180,6 +181,7 @@ q_offset = 41;
    
    % For 2nd Level Bins
      for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1) 
+           fprintf("\nProcessing Image: %d",img_no);
         scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1)));
         
       

@@ -32,16 +32,17 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     %[img,mask,inpainted_img,normalised3] = main_function(img);
  %   [finalA,NumImages] = Algo2001_3(img,1);
    
- [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
+ [finalA,NumImages,~,~] = Algo2001_3(img,1,StabilityPredictor); 
  
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  
  for sc = 1:NumImages
      fprintf("\nScaling Components in Image No. %d",sc);
+     check =  scaled_final_img(finalA(:,:,sc)) + sc;
      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-     label = max(scaled_final_img(f_neighbors));
+   
     
-    scaled_final_img(finalA(:,:,sc)) = scaled_final_img(finalA(:,:,sc)) + label;
+    scaled_final_img(finalA(:,:,sc)) = check;
  end
  
  figure
