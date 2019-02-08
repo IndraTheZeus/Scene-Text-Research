@@ -2,4 +2,4 @@
 load('DensityRemovedEnsemble.mat')
 load('DensityPixelsRemovedEnsemble.mat')
 batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\DensityRemoved\','jpg','bmp',DensityRemoved)
-batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\DensityPixelsRemoved\','jpg','bmp',DensityPixelsRemoved)
+%batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\DensityPixelsRemoved\','jpg','bmp',DensityPixelsRemoved)

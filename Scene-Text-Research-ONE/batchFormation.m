@@ -44,14 +44,14 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     scaled_final_img(finalA(:,:,sc)) = scaled_final_img(finalA(:,:,sc)) + label;
  end
  
- figure
- imagesc(scaled_final_img)
+%  figure
+%  imagesc(scaled_final_img)
  %The display img is the one displayed
  display_img = mat2gray(scaled_final_img);
  figure
  imshow(display_img)
- display_img = finalA;
- %NumImages = 1;
+%  display_img = finalA;
+ NumImages = 1;
 %  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
  
  
