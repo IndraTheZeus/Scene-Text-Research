@@ -34,27 +34,43 @@ for i = 1:num_pages  %%CONVERT TO 1:1
    
  [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
  
- scaled_final_img = ones(size(finalA,1),size(finalA,2));
- 
- for sc = 1:NumImages
+ scaled_final_img = zeros(size(finalA,1),size(finalA,2));
+ %added_img = false(size(scaled_final_img));
+ for sc = NumImages:-1:1
      fprintf("\nScaling Components in Bin No. %d",sc);
+     
+     if(finalA(:,:,sc) == 0)
+         continue;
+     end
      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-     label = max(max(scaled_final_img(f_neighbors)))+sc;
+     label = max(scaled_final_img(f_neighbors)) + 1
     
-    scaled_final_img(finalA(:,:,sc)) = scaled_final_img(finalA(:,:,sc)) + label;
+    scaled_final_img(finalA(:,:,sc)) = sc;
+   % added_img = logical(added_img + finalA(:,:,sc));
  end
  
+ max_map = scaled_final_img > 0;
+ min_label = min(min(scaled_final_img(max_map)))
+ max_label = max(max(scaled_final_img(max_map)))
+ scaled_final_img(max_map) = scaled_final_img(max_map) - min_label;
 %  figure
 %  imagesc(scaled_final_img)
  %The display img is the one displayed
- show_img = logical(scaled_final_img);
- imshow(show_img)
- imwrite(show_img,strcat("BinCombined_",strcat(strrep(file_names{i},strcat('.',file_ext),''),'.bmp'),'bmp'));
+ %figure
+ %imshow(added_img)
+ %SaveFile = strcat("BinCombined_",strrep(file_names{i},strcat('.',file_ext),''),'.jpg');
+% imwrite(scaled_final_img,SaveFile,'jpg');
  figure
 image(scaled_final_img)
+figure
+imagesc(scaled_final_img)
+savefig(strcat("ColorRegionsFigure_",file_names{i},".fig"))
+show = mat2gray(scaled_final_img);
+figure
+imshow(show)
 %  figure
 %  imshow(display_img)
- savefig(strrep("RegionsFigure_",file_names{i},".fig"))
+ savefig(strcat("RegionsFigure_",file_names{i},".fig"))
   display_img = finalA;
 
 %  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
