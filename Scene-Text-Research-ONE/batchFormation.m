@@ -33,7 +33,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  %   [finalA,NumImages] = Algo2001_3(img,1);
    
  [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
- 
+ close all
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  %added_img = false(size(scaled_final_img));
  for sc = NumImages:-1:1
@@ -64,13 +64,13 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 image(scaled_final_img)
 figure
 imagesc(scaled_final_img)
-savefig(strcat("ColorRegionsFigure_",file_names{i},".fig"))
+savefig(strcat(dir_results,"ColorRegionsFigure_",file_names{i},".fig"))
 show = mat2gray(scaled_final_img);
 figure
 imshow(show)
 %  figure
 %  imshow(display_img)
- savefig(strcat("RegionsFigure_",file_names{i},".fig"))
+ savefig(strcat(dir_results,"RegionsFigure_",file_names{i},".fig"))
   display_img = finalA;
 
 %  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
