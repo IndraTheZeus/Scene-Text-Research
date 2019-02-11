@@ -1,1 +1,3 @@
-ExcelBatchFormation('D:\Indra-scene-text-research-one\CROPPED_DATASET\BoundingBoxImages\','D:\Indra-scene-text-research-one\CROPPED_DATASET\ExtractedRegion\','jpg','xlsx')
+batchFormation('E:\ResearchFiles\DATA\test_input\','E:\ResearchFiles\DATA\test_output\','png')
+
+%Cropper('E:\ResearchFiles\DATA\test_input\','E:\ResearchFiles\DATA\test_output\','jpg','xls')

@@ -1,6 +1,6 @@
 %%%%%%   batchFormation()
 
-function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext)
+function Cropper(dir_in, dir_results, file_ext,excel_file_ext)
 disp('WAIT! Execution begining...');
 
 % list of files in the directory name with the input file extension
@@ -21,22 +21,22 @@ for i = 1:num_pages
     
     % load the image from the directory
     img = imread(strcat(dir_in,file_names{i}));
-    excel_file_names
+    excel_file_names{i}
   
     if numel(excel_file_names)~= 0 
-        filename = strcat(dir_in,strcat("/",excel_file_names{i}));
+        filename = strcat(dir_in,"/",excel_file_names{i});
        X = xlsread(filename);
        
        imshow(img)
        for r = 1:size(X,1)
           BB = ceil(X(r,1:4)); 
-          [finalA]= findInterestRegions(img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:));
+          c_img = img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:);
 %           imshow(finalA)
-           name = strrep(strcat(strcat(int2str(i),'_output_'),int2str(r)),file_names{i},strcat('.',file_ext));
+           name = strcat(strrep(file_names{i},strcat('.',file_ext),''),'_',int2str(r));
           
-           saveFile3=strcat(dir_results,name,'.jpg');
+           saveFile3=strcat(dir_results,name,'.png');
 
-           imwrite(finalA,saveFile3,'jpg');
+           imwrite(c_img,saveFile3,'png');
        end
     end
     %[row,col,layer] = size(img);

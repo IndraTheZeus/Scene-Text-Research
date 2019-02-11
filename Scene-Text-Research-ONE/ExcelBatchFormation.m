@@ -1,6 +1,6 @@
 %%%%%%   batchFormation()
 
-function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext)
+function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext,extractFromSheet)
 disp('WAIT! Execution begining...');
 
 append_mode = true;
@@ -8,9 +8,12 @@ output_filename = strcat(dir_results,"StabilityFeatures(0.2,0.25).xlsx");
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
-excel_listing = dir(strcat(dir_in,'*.',excel_file_ext));
+if extractFromSheet
+    excel_listing = dir(strcat(dir_in,'*.',excel_file_ext));
+    excel_file_names = {excel_listing.name};
+end
 file_names = {listing.name};
-excel_file_names = {excel_listing.name};
+
 % number of pages in the directory with this file extension
 num_pages = length(file_names);
 
@@ -28,16 +31,20 @@ for i = 1:num_pages
     
     % load the image from the directory
     img = imread(strcat(dir_in,file_names{i}));
-    excel_file_names{i}
+    if extractFromSheet
+        excel_file_names{i}
+    end
   
-    if numel(excel_file_names)~= 0 
+    if ~extractFromSheet || numel(excel_file_names)~= 0 
+       
+        
+     if extractFromSheet   
         filename = strcat(dir_in,strcat("/",excel_file_names{i}));
        X = xlsread(filename);
-       
-%        imshow(img)
+      
        for r = 1:size(X,1)
           BB = ceil(X(r,1:4));
-          [FeaturesX,Labelsy,~,~] = LoadFeatureMatrix(img(max(0,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(0,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:));
+          [FeaturesX,Labelsy,~,~] = LoadFeatureMatrix(img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:));
           [rM,~] = size(FeaturesX);
           if ~f_init
              f_init = true;
@@ -49,7 +56,21 @@ for i = 1:num_pages
           %imshow(finalA)
 
        end
+     else
+        [FeaturesX,Labelsy,~,~] = LoadFeatureMatrix(img);
+          [rM,~] = size(FeaturesX);
+          if ~f_init
+             f_init = true;
+             FeatureSet = zeros(1,size(FeaturesX,2));
+          end
+         FeatureSet(training_entry:(training_entry+rM-1),:) = FeaturesX;
+         FeatureLabel(training_entry:(training_entry+rM-1),:) = Labelsy;
+         training_entry = training_entry+rM; 
+     end
+      
     end
+    
+    
 end
 
      
@@ -66,7 +87,7 @@ end
           fprintf("\nData Dimension mismatch with previous data,Writing New File..");
           Prev_size = size(Prev)
           Data_size = size(Data)
-           xlswrite(strcat(output_filename,"_"),Data);
+           xlswrite(strcat("S_",output_filename),Data);
         else
              xlswrite(output_filename,[Prev;Data]);
         end
