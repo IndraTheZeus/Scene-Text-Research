@@ -3,7 +3,7 @@
 function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext,extractFromSheet)
 disp('WAIT! Execution begining...');
 
-append_mode = true;
+append_mode = false;
 output_filename = strcat(dir_results,"StabilityFeatures(0.2,0.25).xlsx");
 
 % list of files in the directory name with the input file extension
