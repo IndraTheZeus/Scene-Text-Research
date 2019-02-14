@@ -24,8 +24,22 @@ for i = 1:num_pages
     % call the text line extraction code
     %[outputImg] = test5icdar2(img);
     %[img,mask,inpainted_img,normalised3] = main_function(img);
-    finalA = findInterestRegions(img);
+    
+    
+   % finalA = findInterestRegions(img);
+             level = SauvolaBinary(rgb2gray(img),5,3);
+          finalA = imbinarize(img,level);
+          %[finalA,T] = SauvolaBinary(rgb2gray(img),2,1);
+         [row,col] = size(finalA);
+           textClass = 1 - mode([finalA(row,:) finalA(1,:) finalA(2:row-1,1)' finalA(2:row-1,col)']);
+   
+      if textClass == 0
+         finalA = ~finalA; 
+      end
+      finalA = ReduceToMainCCs(finalA);
     NumImages = 1;
+    
+    
     % remove the file extension from the file name
 %     for j=(1:NumImages)
 %         for k=(1:NumImages)
