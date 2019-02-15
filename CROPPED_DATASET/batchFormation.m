@@ -27,9 +27,12 @@ for i = 1:num_pages
     
     
    % finalA = findInterestRegions(img);
-             level = SauvolaBinary(rgb2gray(img),5,3);
-          finalA = imbinarize(img,level);
-          %[finalA,T] = SauvolaBinary(rgb2gray(img),2,1);
+          % level = graythresh(rgb2gray(img));
+         % finalA = imbinarize(img,level);
+         
+         finalA = wolf(rgb2gray(img),size(img),0.3);
+         
+         % [finalA,T] = SauvolaBinary(rgb2gray(img),0.5,200);
          [row,col] = size(finalA);
            textClass = 1 - mode([finalA(row,:) finalA(1,:) finalA(2:row-1,1)' finalA(2:row-1,col)']);
    

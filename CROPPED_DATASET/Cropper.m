@@ -27,7 +27,7 @@ for i = 1:num_pages
         filename = strcat(dir_in,"/",excel_file_names{i});
        X = xlsread(filename);
        
-       imshow(img)
+      % imshow(img)
        for r = 1:size(X,1)
           BB = ceil(X(r,1:4)); 
           c_img = img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:);
