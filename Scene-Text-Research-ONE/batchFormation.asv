@@ -53,16 +53,13 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  min_label = min(min(scaled_final_img(max_map)));
  max_label = max(max(scaled_final_img(max_map)));
  scaled_final_img(max_map) = scaled_final_img(max_map) - min_label;
-
- %  figure
+%  figure
 %  imagesc(scaled_final_img)
  %The display img is the one displayed
  %figure
  %imshow(added_img)
  %SaveFile = strcat("BinCombined_",strrep(file_names{i},strcat('.',file_ext),''),'.jpg');
 % imwrite(scaled_final_img,SaveFile,'jpg');
-
-
  figure
 image(scaled_final_img)
 figure
