@@ -31,7 +31,7 @@ for i = 1:num_pages
        for r = 1:size(X,1)
           BB = ceil(X(r,1:4)); 
           scan_img = img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:);
-          out   = wolf(rgb2gray(scan_img),[100 100],0.3);
+          out   = wolf(rgb2gray(scan_img),size(scan_image),0.3);
            [row,col] = size(out);
            textClass = 1 - mode([out(row,:) out(1,:) out(2:row-1,1)' out(2:row-1,col)']);
    

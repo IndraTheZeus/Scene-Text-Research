@@ -34,6 +34,7 @@ for i = 1:num_pages
           scan_img = img(max(1,BB(2)-5):min(BB(2)+BB(4)+5,size(img,1)),max(1,BB(1)-5):min(BB(1)+BB(3)+5,size(img,2)),:);
           level = graythresh(rgb2gray(scan_img));
           finalA = imbinarize(scan_img,level);
+          finalA = 
 %           imshow(finalA)
            name = strrep(strcat(strcat(int2str(i),'_output_'),int2str(r)),file_names{i},strcat('.',file_ext));
           
