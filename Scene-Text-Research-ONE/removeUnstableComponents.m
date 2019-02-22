@@ -13,7 +13,7 @@ q_offset = 41;
     %For 1st Level Bins
        for img_no = (q_offset+1):(q_offset+main_offset)
            close all
-         fprintf("\nProcessing Bin No.: %d",img_no);
+         %fprintf("\nProcessing Bin No.: %d",img_no);
          output_image(:,:) = 0;
         if img_no ~= (q_offset+main_offset)
           scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset)));
@@ -183,7 +183,7 @@ q_offset = 41;
    % For 2nd Level Bins
      for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1) 
          close all
-           fprintf("\nProcessing Bin No.: %d",img_no);
+          % fprintf("\nProcessing Bin No.: %d",img_no);
         scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1)));
         
       

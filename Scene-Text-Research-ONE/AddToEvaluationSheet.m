@@ -47,7 +47,7 @@ function AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
           end
           
           if ~min_deviation_set
-             evalX(comp,:) = [numel(region) 0 0 0];
+             evalX(comp,:) = [numel(region) 0 0 numel(region)];
           else
              evalX(comp,:) = [numel(region) numel(min_deviation_region) numel(union(region,min_deviation_region)) numel(intersect(region,min_deviation_region))];
           end

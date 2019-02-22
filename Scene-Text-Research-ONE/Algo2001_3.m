@@ -17,10 +17,10 @@
  rgb_BinImages = false(row,col,NUM_BIN_IMAGES);
  
  
-  stage = 1
+  %stage = 1
  q_offset = 0;
  DistanceMatrix = zeros(row,col);
- fprintf("\nMapping Image Pixels to Distance Matrix");
+ %fprintf("\nMapping Image Pixels to Distance Matrix");
  for r = 1:row
      for c = 1:col
         DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,2),image(r,c,3)));
@@ -30,7 +30,7 @@
  for i = 1:numel(BinSizes)
    main_offset = ceil(MAX_DISTANCE/BinSizes(i));
    k = ceil((BinSizes(i)/2)) -1;
-    fprintf("\nMapping Image to Bin Size: %d",BinSizes(i));
+   % fprintf("\nMapping Image to Bin Size: %d",BinSizes(i));
    for r = 1:row
         for c = 1:col
      
@@ -80,14 +80,14 @@
     q_offset = q_offset+2*main_offset-1;
  end
  
- fprintf("\n.....Removing Unncessary Components.....");
+% fprintf("\n.....Removing Unncessary Components.....");
  rgb_BinImages = ReduceToMainCCs(rgb_BinImages);   % Remove small points
  
  stage = 2;
  if stage>end_stage
     rgb_SUImages = rgb_BinImages;
  else
-     stage = 2
+     %stage = 2
      rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
 %     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
     stage = 3;
