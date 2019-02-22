@@ -34,6 +34,12 @@ for i = 1:num_pages  %%CONVERT TO 1:1
    
  [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
  close all
+ 
+ 
+ AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
+ 
+ continue
+ 
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  %added_img = false(size(scaled_final_img));
  for sc = NumImages:-1:1
@@ -76,35 +82,7 @@ imshow(show)
  savefig(strcat(dir_results,"RegionsFigure_",file_names{i},".fig"))
   display_img = finalA;
 
-%  [finalA,NumImages] = LoadFeatureMatrix(dir_in,file_ext);
- 
- 
-%    finalA = findInterestRegions(img);
-%    NumImages = 1;
-    % remove the file extension from the file name
-%     for j=(1:NumImages)
-%         for k=(1:NumImages)
-%        F_img = matrix(:,:,k,j);
-%     name = strrep(file_names{i},strcat('.',file_ext),'');
-    %name1=strcat(name,'_1img');
-    %name2=strcat(name,'_2mask');
-%     name3=strcat(name,'_img');
-%     name3 = strcat(name3, strcat(int2str(k),'_pass_',int2str(j)));
-    %name4=strcat(name,'_4normalised');
-    
-    % create a directory with the file name with the extension    
-    %saveFile1=strcat(dir_results,name1,'.bmp');
-    %saveFile2=strcat(dir_results,name2,'.bmp');
-%     saveFile3=strcat(dir_results,name3,'.jpg');
-    %saveFile4=strcat(dir_results,name4,'.bmp');
-    
-    % save output images
-    %imwrite(img,saveFile1,'bmp');    
-    %imwrite(mask,saveFile2,'bmp');
-%     imwrite(F_img,saveFile3,'jpg');
-    %imwrite(normalised3,saveFile4,'bmp');
-%         end
-%    end
+
 
 
    for j=(1:NumImages)
@@ -129,79 +107,7 @@ imshow(show)
     %imwrite(normalised3,saveFile4,'bmp');
    end
     
-%   for j=(1:NumImages)
-%        F_img = finalB(:,:,j);
-%     name = strrep(file_names{i},strcat('.',file_ext),'');
-%     %name1=strcat(name,'_1img');
-%     %name2=strcat(name,'_2mask');
-%     name3=strcat(name,'_img');
-%     name3 = strcat(name3, strcat('finalRed_',int2str(j)));
-%     %name4=strcat(name,'_4normalised');
-%     
-%     % create a directory with the file name with the extension    
-%     %saveFile1=strcat(dir_results,name1,'.bmp');
-%     %saveFile2=strcat(dir_results,name2,'.bmp');
-%     saveFile3=strcat(dir_results,name3,'.jpg');
-%     %saveFile4=strcat(dir_results,name4,'.bmp');
-%     
-%     % save output images
-%     %imwrite(img,saveFile1,'bmp');    
-%     %imwrite(mask,saveFile2,'bmp');
-%     imwrite(F_img,saveFile3,'jpg');
-%     %imwrite(normalised3,saveFile4,'bmp');
-%   end
-%     
-%    for j=(1:NumImages)
-%        F_img = finalC(:,:,j);
-%     name = strrep(file_names{i},strcat('.',file_ext),'');
-%     %name1=strcat(name,'_1img');
-%     %name2=strcat(name,'_2mask');
-%     name3=strcat(name,'_img');
-%     name3 = strcat(name3, strcat('finalGreen_',int2str(j)));
-%     %name4=strcat(name,'_4normalised');
-%     
-%     % create a directory with the file name with the extension    
-%     %saveFile1=strcat(dir_results,name1,'.bmp');
-%     %saveFile2=strcat(dir_results,name2,'.bmp');
-%     saveFile3=strcat(dir_results,name3,'.jpg');
-%     %saveFile4=strcat(dir_results,name4,'.bmp');
-%     
-%     % save output images
-%     %imwrite(img,saveFile1,'bmp');    
-%     %imwrite(mask,saveFile2,'bmp');
-%     imwrite(F_img,saveFile3,'jpg');
-%     %imwrite(normalised3,saveFile4,'bmp');
-%    end
-%   
-%    for j=(1:NumImages)
-%        F_img = finalD(:,:,j);
-%     name = strrep(file_names{i},strcat('.',file_ext),'');
-%     %name1=strcat(name,'_1img');
-%     %name2=strcat(name,'_2mask');
-%     name3=strcat(name,'_img');
-%     name3 = strcat(name3, strcat('finalBlue_',int2str(j)));
-%     %name4=strcat(name,'_4normalised');
-%     
-%     % create a directory with the file name with the extension    
-%     %saveFile1=strcat(dir_results,name1,'.bmp');
-%     %saveFile2=strcat(dir_results,name2,'.bmp');
-%     saveFile3=strcat(dir_results,name3,'.jpg');
-%     %saveFile4=strcat(dir_results,name4,'.bmp');
-%     
-%     % save output images
-%     %imwrite(img,saveFile1,'bmp');    
-%     %imwrite(mask,saveFile2,'bmp');
-%     imwrite(F_img,saveFile3,'jpg');
-%     %imwrite(normalised3,saveFile4,'bmp');
-%   end
-%     
-    
-%      F_img = final;
-%      name = strrep(file_names{i},strcat('.',file_ext),'');
-%     name3=strcat(name,'_img');
-%     name3 = strcat(name3, int2str(65));
-%     saveFile3=strcat(dir_results,name3,'.jpg');
-%     imwrite(F_img,saveFile3,'jpg');
+    imwrite(F_img,saveFile3,'jpg');
 
 end
 disp('\nWOW! Successful Execution...');
