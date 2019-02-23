@@ -1,6 +1,6 @@
 function AccuracyFromTable(X)
     
-    dev_value = 0.1;
+    dev_value = 0.2;
     deviation = (X(:,1) - X(:,2))./X(:,1);
     
     y = deviation < dev_value;

@@ -17,7 +17,7 @@ fprintf('Total number of pages = %d\n', num_pages);
 for i = 1:num_pages  %%CONVERT TO 1:1 
   %if((i>=120)&&(i<125))  
  
-    fprintf('Processing Image No: %d\n', i);  %%Commented out,reading done by load data  
+   % fprintf('Processing Image No: %d\n', i);  %%Commented out,reading done by load data  
 %     
 %    %% load the image from the directory
 %  

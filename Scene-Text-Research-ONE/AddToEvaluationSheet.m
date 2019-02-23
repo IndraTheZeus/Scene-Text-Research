@@ -68,7 +68,7 @@ function AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
           
       end
       
-      AccuracyFromTable(evalX);
+     % AccuracyFromTable(evalX);
       
       if isfile(ExcelFilenameWithPath)
         Prev = xlsread(ExcelFilenameWithPath);
