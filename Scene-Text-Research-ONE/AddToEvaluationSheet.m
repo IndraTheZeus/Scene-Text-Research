@@ -4,7 +4,18 @@ function AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
         
        error("Generated Images and Correct Image dimension mismatch"); 
     end
+    
+    
+    
     BWImages = zeros(size(GeneratedImgs));
+    
+      [row,col] = size(CorrectImage);
+           textClass = 1 - mode([CorrectImage(row,:) CorrectImage(1,:) CorrectImage(2:row-1,1)' CorrectImage(2:row-1,col)']);
+   
+       if textClass == 0
+          CorrectImage = ~CorrectImage; 
+       end
+      CorrectImage = ReduceToMainCCs(CorrectImage);
     
     for bw = 1:size(GeneratedImgs,3)
         

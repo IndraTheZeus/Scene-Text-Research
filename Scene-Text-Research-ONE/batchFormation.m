@@ -36,7 +36,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  close all
  
  
- AddToEvaluationSheet(finalA, ReduceToMainCCs(wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx")));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
+ AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
  
  continue
  

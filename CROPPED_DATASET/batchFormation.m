@@ -36,9 +36,9 @@ for i = 1:num_pages
          [row,col] = size(finalA);
            textClass = 1 - mode([finalA(row,:) finalA(1,:) finalA(2:row-1,1)' finalA(2:row-1,col)']);
    
-      if textClass == 0
-         finalA = ~finalA; 
-      end
+       if textClass == 0
+          finalA = ~finalA; 
+       end
       finalA = ReduceToMainCCs(finalA);
     NumImages = 1;
     
