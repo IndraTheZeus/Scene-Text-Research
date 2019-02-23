@@ -31,13 +31,14 @@ function AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
                  end
                  if ~min_deviation_set
                     min_deviation_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
-                    IOU_max = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
-                    min_deviation_set = true;
+                   % IOU_max = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
+            
+                   min_deviation_set = true;
                  else
-                     IOU = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
-                     if IOU > IOU_max
+                    % IOU = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
+                     if abs(numel(min_deviation_region) - numel(region)) > abs(numel(ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}) - numel(region))%IOU > IOU_max
                             min_deviation_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
-                            IOU_max = IOU;
+                          %  IOU_max = IOU;
                              min_deviation_set = true;
                      end
                 end
@@ -56,7 +57,7 @@ function AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
           
       end
       
-      
+      AccuracyFromTable(evalX);
       
       if isfile(ExcelFilenameWithPath)
         Prev = xlsread(ExcelFilenameWithPath);

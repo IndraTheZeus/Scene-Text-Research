@@ -23,7 +23,7 @@ load('C14.mat')
 % %batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\C6\','jpg','bmp',Removed369_1)
 % batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\C7\','jpg','bmp',removed369_2)
 i = 1;
-for Classifier = [ AllFeatures_1, AllFeatures_2, Removed9_1, Removed9_2, Removed6_1, Removed6_2, Removed3_1, Removed3_2, Removed63_1, Removed63_2, Removed369_1, Removed369_2 ]
+for Classifier = [ AllFeatures_1, AllFeatures_2]%Removed9_1, Removed9_2, Removed6_1, Removed6_2, Removed3_1, Removed3_2, Removed63_1, Removed63_2, Removed369_1, Removed369_2 ]
     fprintf("\n\nTARGETING CLASSIFIER = %d\n",i);
     target = strcat('D:\Indra-scene-text-research-one\DATA\test_output\C',int2str(i),'\');
     i = i+1;
