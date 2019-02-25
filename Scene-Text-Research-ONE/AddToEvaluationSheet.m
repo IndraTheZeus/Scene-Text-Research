@@ -9,7 +9,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
     
     
     BWImages = zeros(size(GeneratedImgs));
-    
+    saveC = CorrectImage;
       [row,col] = size(CorrectImage);
            textClass = 1 - mode([CorrectImage(row,:) CorrectImage(1,:) CorrectImage(2:row-1,1)' CorrectImage(2:row-1,col)']);
    
@@ -25,7 +25,15 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
     end
 
      CC_correct = bwconncomp(CorrectImage);
-     evalX = zeros(min(1,CC_correct.NumObjects),7);
+     
+%      if CC_correct.NumObjects == 0
+%         warning("Bounding Box with no Data");
+%         imshow(CorrectImage);
+%         figure
+%         imshow(saveC);
+%      end
+
+     evalX = zeros(max(1,CC_correct.NumObjects),7);
       for comp = 1:CC_correct.NumObjects
           min_deviation_set = false;
           max_IOU_set = false;

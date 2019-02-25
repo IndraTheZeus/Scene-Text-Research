@@ -13,7 +13,7 @@ xml_listing = dir(strcat(dir_in,'*.','xml'));
 bin_listing = dir(strcat(dir_in,'*.','bmp'));
 
 
-xml_i = 1;
+
 
 file_names = {listing.name};
 xml_names = {xml_listing.name};
@@ -36,10 +36,12 @@ fprintf('Total number of pages = %d\n', num_pages);
 
 % process all pages in the directory
 X_created = false;
+
+xml_i = 1;
 for i = 1:num_pages  
       
    
-    if i > f_n || i > x_n || i > b_n
+    if i > f_n || i > b_n || xml_i > x_n
        fprintf("\n%d Not Processed due to missing files\n",i);
        continue; 
     end
@@ -91,7 +93,10 @@ for i = 1:num_pages
          close all
         correct_img = bin_img(y1:y2,x1:x2);
      %   imshow(correct_img);  %%Comment out for speed
-        EX =  AddToEvaluationSheet(finalA,ReduceToMainCCs(correct_img));
+        EX =  AddToEvaluationSheet(finalA,correct_img);
+        if EX(1,1) == 0
+           continue; 
+        end
         AccuracyFromTable(EX);
         if ~X_created
             X_created = true;

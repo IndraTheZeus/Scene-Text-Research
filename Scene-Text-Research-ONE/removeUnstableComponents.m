@@ -65,7 +65,7 @@ q_offset = 41;
            lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),2); %Make to 1 for speed
            upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
       
-        if show_error && lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0    
+        if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0)    
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -76,7 +76,7 @@ q_offset = 41;
            continue;
         end
         
-        if show_error && upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0    
+        if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )  
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -92,7 +92,7 @@ q_offset = 41;
         upper_range_comp_no_pixels = numel(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)});
         lower_range_comp_no_pixels = numel(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)});
         
-        if show_error && comp_num_of_pixels > lower_range_comp_no_pixels          
+        if show_error && (comp_num_of_pixels > lower_range_comp_no_pixels)        
            fprintf("\nError in Finding Correct LOWER Range Component: Size of Overlap reduced ");
            figure('Name','ERROR: Size Reduction!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -107,7 +107,7 @@ q_offset = 41;
            continue;
         end
 
-        if show_error && comp_num_of_pixels > upper_range_comp_no_pixels          
+        if show_error && (comp_num_of_pixels > upper_range_comp_no_pixels)          
           fprintf("\nError in Finding Correct UPPER Range Component: Size of Overlap reduced ");
            figure('Name','ERROR: Size Reduction!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -222,7 +222,7 @@ q_offset = 41;
            lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),2); %Make to 1 for speed
            upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
       
-         if show_error && lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0    
+         if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0 )   
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -233,7 +233,7 @@ q_offset = 41;
            continue;
         end
         
-        if show_error && upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0    
+        if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )    
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -249,7 +249,7 @@ q_offset = 41;
         upper_range_comp_no_pixels = numel(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)});
         lower_range_comp_no_pixels = numel(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)});
         
-        if show_error && comp_num_of_pixels > lower_range_comp_no_pixels          
+        if show_error && (comp_num_of_pixels > lower_range_comp_no_pixels)         
            fprintf("\nError in Finding Correct LOWER Range Component: Size of Overlap reduced ");
            figure('Name','ERROR: Size Reduction!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -264,7 +264,7 @@ q_offset = 41;
            continue;
         end
 
-        if show_error && comp_num_of_pixels > upper_range_comp_no_pixels          
+        if show_error && (comp_num_of_pixels > upper_range_comp_no_pixels)         
           fprintf("\nError in Finding Correct UPPER Range Component: Size of Overlap reduced ");
            figure('Name','ERROR: Size Reduction!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
