@@ -23,7 +23,12 @@
  %fprintf("\nMapping Image Pixels to Distance Matrix");
  for r = 1:row
      for c = 1:col
-        DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,2),image(r,c,3)));
+        if size(image,3) == 1
+            DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,1),image(r,c,1)));
+        else
+            DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,2),image(r,c,3)));
+        end
+        
      end
  end
  

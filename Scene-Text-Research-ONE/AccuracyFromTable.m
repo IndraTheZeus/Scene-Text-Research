@@ -1,4 +1,4 @@
-function AccuracyFromTable(X)
+function res =  AccuracyFromTable(X)
     
     dev_value = 0.2;
     deviation = (X(:,1) - X(:,2))./X(:,1);
@@ -11,6 +11,6 @@ function AccuracyFromTable(X)
     IOU = Intersects/Unions;
     acc = sum(y)/numel(y);
     fprintf("\n  =======  ACCURACY WITH DEVIATION OF %f: %d percent    IOU = %d   =======\n",dev_value,(acc*100),IOU);
-
+    res = [dev_value (acc*100) IOU]; 
 
 end

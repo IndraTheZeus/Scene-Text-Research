@@ -23,18 +23,25 @@ load('C14.mat')
 % %batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\C6\','jpg','bmp',Removed369_1)
 % batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\C7\','jpg','bmp',removed369_2)
 i = 1;
-for Classifier = [ Removed9_1, Removed9_2, Removed6_1, Removed6_2, Removed3_1, Removed3_2, Removed63_1, Removed63_2, Removed369_1, Removed369_2 ]
+
+for Classifier = [ AllFeatures_1,AllFeatures_2] %Removed9_1, Removed9_2, Removed6_1, Removed6_2, Removed3_1, Removed3_2, Removed63_1, Removed63_2, Removed369_1, Removed369_2 ]
     fprintf("\n\nTARGETING CLASSIFIER = %d\n",i);
     target = strcat('D:\Indra-scene-text-research-one\DATA\test_output\C',int2str(i),'\');
-    i = i+1;
-    batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\',target,'png','bmp',Classifier) %TARGET CHANGED
     
-    
-    Eval = xlsread(strcat(target,"Evaluate.xlsx")); 
+  %  batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\',target,'png','bmp',Classifier) %TARGET CHANGED
+  for lang = ["English" , "Korean", "Mixed" ]
+     for type =["Digital_Camera","Mobile_Phone"]
+        dir_in = char(strcat('E:\ResearchFiles\DATA\KAIST_all\KAIST\',lang,'\',type,'\'));
+         KaistDatasetEval(dir_in,strcat(pwd,'\'),strcat('C',int2str(i),'_KaistEval.xlsx'),'jpg',Classifier);
+     end
+  end
+  
+  for j = 1:i
+    Eval = xlsread(strcat(strcat(pwd,'\'),strcat('C',int2str(j),'_KaistEval.xlsx'))); 
     AccuracyFromTable(Eval);
-    
-    fprintf("\nFINISHED WITH CLASSIFIER = %d\n",(i-1));
-    
+  end
+    fprintf("\nFINISHED WITH CLASSIFIER = %d\n",(i));
+     i = i+1;
 end
 %  ExcelBatchFormation('D:\Indra-scene-text-research-one\DATA\test_input\','D:\Indra-scene-text-research-one\DATA\test_output\','png','xls',false)
 % load('DensityRemovedEnsemble.mat')

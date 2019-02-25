@@ -25,10 +25,9 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWi
     end
 
      CC_correct = bwconncomp(CorrectImage);
-     evalX = zeros(CC_correct.NumObjects,7);
+     evalX = zeros(CC_correct.NumObjects,4);
       for comp = 1:CC_correct.NumObjects
           min_deviation_set = false;
-          max_IOU_set = false;
          
           region = CC_correct.PixelIdxList{comp};
           
@@ -42,29 +41,31 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWi
                  if overlap_label_nos(1,overlaps) == 0
                      break
                  end
-                 
-                 
                  if ~min_deviation_set
                     min_deviation_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
-                 
+                   % IOU_max = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
+            
                    min_deviation_set = true;
                  else
-                  
+                    % IOU = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
                      if abs(numel(min_deviation_region) - numel(region)) > abs(numel(ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}) - numel(region))%IOU > IOU_max
                             min_deviation_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
+                          %  IOU_max = IOU;
+                             min_deviation_set = true;
                      end
                  end
                 
                 if ~max_IOU_set
                     max_IOU_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
-                    IOU_max = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
+                   % IOU_max = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
             
-                    max_IOU_set = true;
+                   max_IOU_set = true;
                  else
                      IOU = numel(intersect(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}))/numel(union(region,ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)}));
                      if IOU > IOU_max
                             max_IOU_region = ccStruct.PixelIdxList{overlap_label_nos(1,overlaps)};
-                            IOU_max = IOU; 
+                            IOU_max = IOU;
+                             
                      end
                 end
                  
@@ -73,7 +74,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWi
           end
           
           if ~min_deviation_set
-             evalX(comp,:) = [numel(region) 0 numel(region) 0 0 numel(region) 0];
+             evalX(comp,:) = [numel(region) 0 numel(region) 0 0 0 numel(region)];
           else
              evalX(comp,:) = [numel(region) numel(min_deviation_region) numel(union(region,min_deviation_region)) numel(intersect(region,min_deviation_region)) numel(max_IOU_region) numel(union(region,max_IOU_region)) numel(intersect(region,max_IOU_region)) ];
           end
