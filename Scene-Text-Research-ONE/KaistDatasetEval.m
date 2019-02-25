@@ -13,7 +13,7 @@ xml_listing = dir(strcat(dir_in,'*.','xml'));
 bin_listing = dir(strcat(dir_in,'*.','bmp'));
 
 
-
+xml_i = 1;
 
 file_names = {listing.name};
 xml_names = {xml_listing.name};
@@ -53,12 +53,13 @@ for i = 1:num_pages
        fprintf("\nFILE DATA MISMATCH,%d not processed\n",i); 
        continue;
     end
+    
     img = imread(strcat(dir_in,file_names{i}));  
   
     t = logical(imread(strcat(dir_in,bin_names{i})));
     bin_img = t(:,:,1) | t(:,:,2) | t(:,:,3);
     
-    xmlS = xml2struct(strcat(dir_in,xml_names{i}));
+    xmlS = xml2struct(strcat(dir_in,xml_names{xml_i}));
 
     
  
@@ -85,7 +86,7 @@ for i = 1:num_pages
          close all
         correct_img = bin_img(y1:y2,x1:x2);
      %   imshow(correct_img);  %%Comment out for speed
-        EX =  AddToEvaluationSheet(finalA,ReduceToMainCCs(correct_img),strcat(dir_results,evalFileName));
+        EX =  AddToEvaluationSheet(finalA,ReduceToMainCCs(correct_img));
         AccuracyFromTable(EX);
         if ~X_created
             X_created = true;
@@ -96,11 +97,12 @@ for i = 1:num_pages
     end
    
         
+    xml_i = xml_i + 1;
 
  
  
   %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
- comtinue;
+ continue;
  
  
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));

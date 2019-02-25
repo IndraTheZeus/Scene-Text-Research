@@ -1,14 +1,21 @@
 %%%%%%   batchFormation()
 
-function KaistDatasetEval(dir_in, dir_results,evalFileName, file_ext,StabilityPredictor)
+function KaistDatasetEval(dir_in, eval_dir ,dir_results,evalFileName, file_ext,StabilityPredictor)
+
+append_mode = false
 disp('\nWAIT! Execution begining...\n');
+
+
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
 xml_listing = dir(strcat(dir_in,'*.','xml'));
 bin_listing = dir(strcat(dir_in,'*.','bmp'));
 
-append_mode = false;
+
+xml_i = 1;
+b
+
 file_names = {listing.name};
 xml_names = {xml_listing.name};
 bin_names = {bin_listing.name};
@@ -40,7 +47,7 @@ for i = 1:num_pages
     [~, FileName, ~] = fileparts(file_names{i});
     [~, ExcelFileName, ~] = fileparts(xml_names{i});
     [~, BinFileName, ~] = fileparts(bin_names{i});
-    if strrep(xml_names{i},"xml",'')~=strrep(file_names{i},file_ext,'') || strrep(xml_names{i},"xml",'')~=strrep(bin_names{i},"bmp",'') || strrep(bin_names{i},"bmp",'')~=strrep(file_names{i},file_ext,'')
+    if (convertCharsToStrings(FileName) ~= convertCharsToStrings(ExcelFileName)) || (convertCharsToStrings(FileName) ~= convertCharsToStrings(BinFileName))
         file_names{i}
         xml_names{i}
         bin_names{i}
@@ -67,9 +74,9 @@ for i = 1:num_pages
             BB = xmlS.images.image.words.word.Attributes;
         end
         
-        x1 = max(0,str2double(BB.x) - 5);
+        x1 = max(1,str2double(BB.x) - 5);
         x2 = min(col,x1 + str2double(BB.width) + 5);
-        y1 = max(0,str2double(BB.y) - 5);
+        y1 = max(1,str2double(BB.y) - 5);
         y2 = min(row,y1 +str2double(BB.height) + 5);
         
         scan_img = img(y1:y2,x1:x2);
@@ -79,8 +86,8 @@ for i = 1:num_pages
          close all
         correct_img = bin_img(y1:y2,x1:x2);
      %   imshow(correct_img);  %%Comment out for speed
-        EX =  AddToEvaluationSheet(finalA,correct_img,strcat(dir_results,evalFileName));
-        
+        EX =  AddToEvaluationSheet(finalA,ReduceToMainCCs(correct_img),strcat(dir_results,evalFileName));
+        AccuracyFromTable(EX);
         if ~X_created
             X_created = true;
             X = EX;
@@ -94,8 +101,8 @@ for i = 1:num_pages
  
  
   %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
+ comtinue;
  
- continue
  
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  %added_img = false(size(scaled_final_img));
@@ -168,12 +175,14 @@ imshow(show)
 
 end
 
-      if append_mode && isfile(ExcelFilenameWithPath)
-        Prev = xlsread(ExcelFilenameWithPath);
-         xlswrite(ExcelFilenameWithPath,[Prev;X]);
-      else
-         xlswrite(ExcelFilenameWithPath,X); 
-      end
 
+     if X_created
+      if append_mode && isfile(evalFileName)
+        Prev = xlsread(strcat(eval_dir,evalFileName));
+         xlswrite(strcat(eval_dir,evalFileName),[Prev;X]);
+      else
+         xlswrite(strcat(eval_dir,evalFileName),X); 
+      end
+     end
 
 disp('\nWOW! Successful Execution...');

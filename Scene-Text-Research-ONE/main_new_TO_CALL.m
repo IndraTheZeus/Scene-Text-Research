@@ -31,8 +31,8 @@ for Classifier = [ AllFeatures_1,AllFeatures_2] %Removed9_1, Removed9_2, Removed
   %  batchFormation('D:\Indra-scene-text-research-one\DATA\test_input\',target,'png','bmp',Classifier) %TARGET CHANGED
   for lang = ["English" , "Korean", "Mixed" ]
      for type =["Digital_Camera","Mobile_Phone"]
-        dir_in = char(strcat('E:\ResearchFiles\DATA\KAIST_all\KAIST\',lang,'\',type,'\'));
-         KaistDatasetEval(dir_in,strcat(pwd,'\'),strcat('C',int2str(i),'_KaistEval.xlsx'),'jpg',Classifier);
+        dir_in = char(strcat("D:\STANDARD_IMAGE_DATASETS\KAIST_all\KAIST\",lang,"\",type,"\"));
+         KaistDatasetEval(dir_in,strcat(pwd,'\'),target,strcat('C',int2str(i),'_KaistEval.xlsx'),'jpg',Classifier);
      end
   end
   

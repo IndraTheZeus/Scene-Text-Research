@@ -1,4 +1,4 @@
-function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage,ExcelFilenameWithPath)
+function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
 
     append_mode = true;
     if size(GeneratedImgs,1) ~= size(CorrectImage,1) ||  size(GeneratedImgs,2) ~= size(CorrectImage,2)
