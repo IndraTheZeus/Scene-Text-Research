@@ -38,7 +38,7 @@ fprintf('Total number of pages = %d\n', num_pages);
 X_created = false;
 for i = 1:num_pages  
       
-    
+   
     if i > f_n || i > x_n || i > b_n
        fprintf("\n%d Not Processed due to missing files\n",i);
        continue; 
@@ -53,15 +53,20 @@ for i = 1:num_pages
        fprintf("\nFILE DATA MISMATCH,%d not processed\n",i); 
        continue;
     end
-    
+     fprintf("Processing image: %d (%s) , Bin: %d(%s) , XML: %d (%s)",i,file_names{i},i,bin_names{i},xml_i,xml_names{xml_i});
     img = imread(strcat(dir_in,file_names{i}));  
   
     t = logical(imread(strcat(dir_in,bin_names{i})));
     bin_img = t(:,:,1) | t(:,:,2) | t(:,:,3);
     
+    try
     xmlS = xml2struct(strcat(dir_in,xml_names{xml_i}));
-
-    
+    test =  numel(xmlS.images.image.words.word);
+    catch
+       fprintf("XML FILE HAS WRONG FORMAT,IGNORING....");
+        xml_i = xml_i +1;
+       continue;
+    end
  
     
     

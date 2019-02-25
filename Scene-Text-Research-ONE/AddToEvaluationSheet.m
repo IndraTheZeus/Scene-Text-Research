@@ -25,7 +25,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
     end
 
      CC_correct = bwconncomp(CorrectImage);
-     evalX = zeros(CC_correct.NumObjects,7);
+     evalX = zeros(min(1,CC_correct.NumObjects),7);
       for comp = 1:CC_correct.NumObjects
           min_deviation_set = false;
           max_IOU_set = false;

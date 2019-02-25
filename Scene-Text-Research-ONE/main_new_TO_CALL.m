@@ -37,6 +37,7 @@ for Classifier = [ AllFeatures_1,AllFeatures_2] %Removed9_1, Removed9_2, Removed
   end
   
   for j = 1:i
+      fprintf("========================== RESULTS =======================");
     Eval = xlsread(strcat(strcat(pwd,'\'),strcat('C',int2str(j),'_KaistEval.xlsx'))); 
     AccuracyFromTable(Eval);
   end
