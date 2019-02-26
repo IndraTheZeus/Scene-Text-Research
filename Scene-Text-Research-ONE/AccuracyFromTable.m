@@ -1,9 +1,9 @@
 function res =  AccuracyFromTable(X)
     
-    dev_value = 0.2;
+    dev_value = 0.25;
     iou_dev = 0.6;
     
-    deviation = (X(:,1) - X(:,2))./X(:,1);
+    deviation = (X(:,1) - X(:,5))./X(:,1);
     overlap = X(:,7)./X(:,6);
     y = (deviation <= dev_value);
     y_2 = (overlap >= iou_dev );
