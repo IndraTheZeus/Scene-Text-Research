@@ -11,7 +11,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
     BWImages = zeros(size(GeneratedImgs));
     saveC = CorrectImage;
       [row,col] = size(CorrectImage);
-           textClass = 1 - mode([CorrectImage(row,:) CorrectImage(1,:) CorrectImage(2:row-1,1)' CorrectImage(2:row-1,col)']);
+           textClass = 1 - mode([CorrectImage(row,:) CorrectImage(1,:) CorrectImage(2:max(2,row-1),1)' CorrectImage(2:max(2,row-1),col)']);
    
        if textClass == 0
           CorrectImage = ~CorrectImage; 

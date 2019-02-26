@@ -37,8 +37,8 @@ fprintf('Total number of pages = %d\n', num_pages);
 % process all pages in the directory
 X_created = false;
 
-xml_i = 1;
-for i = 1:num_pages  
+xml_i = 120;
+for i = 120:num_pages  
      
     if mod(i,20) == 0
         fprintf("\n=================================\n");
