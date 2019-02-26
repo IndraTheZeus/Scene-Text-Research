@@ -66,24 +66,24 @@ q_offset = 41;
            upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
       
         if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0)    
-           fprintf("\n Wrong Calculation in LOWER Range Check Image");
-           figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
-           error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
-           imshow(error_figure);
-           figure('Name','ERROR:Overlap Component !! The Lower Range Overlap Image');
-           error_figure(:,:) = 0;
-           imshow(lower_range_check_img);
+%            fprintf("\n Wrong Calculation in LOWER Range Check Image");
+%            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
+%            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
+%            imshow(error_figure);
+%            figure('Name','ERROR:Overlap Component !! The Lower Range Overlap Image');
+%            error_figure(:,:) = 0;
+%            imshow(lower_range_check_img);
            continue;
         end
         
         if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )  
-           fprintf("\n Wrong Calculation in LOWER Range Check Image");
-           figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
-           error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
-           imshow(error_figure);
-           figure('Name','ERROR:No Overlap Component!! The Upper Range Overlap Image');
-           error_figure(:,:) = 0;
-           imshow(upper_range_check_img);
+%            fprintf("\n Wrong Calculation in LOWER Range Check Image");
+%            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
+%            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
+%            imshow(error_figure);
+%            figure('Name','ERROR:No Overlap Component!! The Upper Range Overlap Image');
+%            error_figure(:,:) = 0;
+%            imshow(upper_range_check_img);
            continue;
         end
         
@@ -223,24 +223,24 @@ q_offset = 41;
            upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
       
          if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0 )   
-           fprintf("\n Wrong Calculation in LOWER Range Check Image");
-           figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
-           error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
-           imshow(error_figure);
-           figure('Name','ERROR:Overlap Component !! The Lower Range Overlap Image');
-           error_figure(:,:) = 0;
-           imshow(lower_range_check_img);
+%            fprintf("\n Wrong Calculation in LOWER Range Check Image");
+%            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
+%            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
+%            imshow(error_figure);
+%            figure('Name','ERROR:Overlap Component !! The Lower Range Overlap Image');
+%            error_figure(:,:) = 0;
+%            imshow(lower_range_check_img);
            continue;
         end
         
         if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )    
-           fprintf("\n Wrong Calculation in LOWER Range Check Image");
-           figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
-           error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
-           imshow(error_figure);
-           figure('Name','ERROR:No Overlap Component!! The Upper Range Overlap Image');
-           error_figure(:,:) = 0;
-           imshow(upper_range_check_img);
+%            fprintf("\n Wrong Calculation in LOWER Range Check Image");
+%            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
+%            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
+%            imshow(error_figure);
+%            figure('Name','ERROR:No Overlap Component!! The Upper Range Overlap Image');
+%            error_figure(:,:) = 0;
+%            imshow(upper_range_check_img);
            continue;
         end
         

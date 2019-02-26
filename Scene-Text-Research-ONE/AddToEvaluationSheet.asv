@@ -29,7 +29,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
      if CC_correct.NumObjects == 0
         warning("Bounding Box with no Data");
         imshow(CorrectImage);
-        figure('Name','No Components in Ground truth');
+        figure
         imshow(saveC);
         evalX = zeros(1,7);
         return

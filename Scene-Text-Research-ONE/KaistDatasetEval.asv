@@ -41,9 +41,7 @@ xml_i = 1;
 for i = 1:num_pages  
      
     if mod(i,20) == 0
-        fprintf("\n=================================\n");
-        warning("Writing Last 20 Records to File %s",evalFileName);
-        fprintf("\n================================\n");
+        fprintf("Writing Last 20 Records to File %s",evalFileName);
      if X_created
       if append_mode && isfile(evalFileName)
         Prev = xlsread(strcat(eval_dir,evalFileName));
@@ -68,7 +66,7 @@ for i = 1:num_pages
        fprintf("\nFILE DATA MISMATCH,%d not processed\n",i); 
        continue;
     end
-     fprintf("\nProcessing image: %d (%s) , Bin: %d(%s) , XML: %d (%s)",i,file_names{i},i,bin_names{i},xml_i,xml_names{xml_i});
+     fprintf("Processing image: %d (%s) , Bin: %d(%s) , XML: %d (%s)",i,file_names{i},i,bin_names{i},xml_i,xml_names{xml_i});
     img = imread(strcat(dir_in,file_names{i}));  
   
     t = logical(imread(strcat(dir_in,bin_names{i})));
@@ -121,7 +119,18 @@ for i = 1:num_pages
    
         
     xml_i = xml_i + 1;
-
+    if mod(i,20) == 0
+        fprintf("Writing Last 20 Records to File %s",evalFileName);
+     if X_created
+      if append_mode && isfile(evalFileName)
+        Prev = xlsread(strcat(eval_dir,evalFileName));
+         xlswrite(strcat(eval_dir,evalFileName),[Prev;X]);
+      else
+         xlswrite(strcat(eval_dir,evalFileName),X); 
+      end
+     end
+        
+    end
  
  
   %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED

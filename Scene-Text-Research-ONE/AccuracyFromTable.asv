@@ -1,14 +1,12 @@
 function res =  AccuracyFromTable(X)
     
     dev_value = 0.2;
-    iou_dev = 0.6;
+    iou_dev = 0.7;
     
     deviation = (X(:,1) - X(:,2))./X(:,1);
     overlap = X(:,7)./X(:,6);
-    y = (deviation <= dev_value);
+    y = (deviation < dev_value);
     y_2 = (overlap >= iou_dev );
-    
-    y_3 = y & y_2;
     
     Unions = sum(X(:,6));
     Intersects = sum(X(:,7));
@@ -22,16 +20,18 @@ function res =  AccuracyFromTable(X)
     end
     acc = sum(y)/numel(y);
     acc_2 = sum(y_2)/numel(y_2);
-    acc_3 = sum(y_3)/numel(y_3);
     
- 
+       if IOU < iou_dev && acc_2 > 0.7
+        
+        
+      end
     
     if isnan(acc) || isnan(acc_2)
        warning("NAN expected");
         X
     end
     
-    fprintf("\n ======= ACC WITH DEV OF %f: %d percent || IOU Accuracy(dev: %d) : %d percent ||| NET ACC: %d =======\n",dev_value,(acc*100),iou_dev,(acc_2*100),(acc_3*100));
+    fprintf("\n======= ACC WITH DEV OF %f: %d percent |||| IOU = %d : Accuracy(dev: %d) : %d percent =======\n",dev_value,(acc*100),IOU,iou_dev,(acc_2*100));
     res = [dev_value (acc*100) IOU]; 
 
 end
