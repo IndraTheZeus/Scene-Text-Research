@@ -37,8 +37,8 @@ fprintf('Total number of pages = %d\n', num_pages);
 % process all pages in the directory
 X_created = false;
 
-xml_i = 120;
-for i = 120:num_pages  
+xml_i = 160;
+for i = 160:num_pages  
      
     if mod(i,20) == 0
         fprintf("\n=================================\n");
@@ -78,14 +78,14 @@ for i = 120:num_pages
     xmlS = xml2struct(strcat(dir_in,xml_names{xml_i}));
     test =  numel(xmlS.images.image.words.word);
     catch
-       fprintf("XML FILE HAS WRONG FORMAT,IGNORING....");
+       fprintf("\nXML FILE HAS WRONG FORMAT,IGNORING....\n");
         xml_i = xml_i +1;
        continue;
     end
  
     
     
-    [row,col] = size(img);
+    [row,col,~] = size(img);
     for word_no = 1: numel(xmlS.images.image.words.word)
        
         if numel(xmlS.images.image.words.word) > 1
@@ -94,18 +94,29 @@ for i = 120:num_pages
             BB = xmlS.images.image.words.word.Attributes;
         end
         
+        try
         x1 = max(1,str2double(BB.x) - 5);
-        x2 = min(col,x1 + str2double(BB.width) + 5);
+        x2 = min(col,(x1 + str2double(BB.width) + 5));
         y1 = max(1,str2double(BB.y) - 5);
-        y2 = min(row,y1 +str2double(BB.height) + 5);
-        
+        y2 = min(row,(y1 +str2double(BB.height) + 5));
+        catch
+             fprintf("\nXML FILE HAS WRONG FORMAT,IGNORING....\n");
+             xml_i = xml_i +1;
+             continue;   
+        end
+       
+         
         scan_img = img(y1:y2,x1:x2);
+
+        
+        
+    
       %  imshow(scan_img); %%Comment out for speed
         
         [finalA,NumImages,~,~] = Algo2001_3(scan_img,2,StabilityPredictor); 
          close all
         correct_img = bin_img(y1:y2,x1:x2);
-     %   imshow(correct_img);  %%Comment out for speed
+       % imshow(correct_img);  %%Comment out for speed
         EX =  AddToEvaluationSheet(finalA,correct_img);
         if EX(1,1) == 0
            continue; 

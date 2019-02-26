@@ -37,11 +37,13 @@ fprintf('Total number of pages = %d\n', num_pages);
 % process all pages in the directory
 X_created = false;
 
-xml_i = 1;
-for i = 1:num_pages  
+xml_i = 177;
+for i = 177:num_pages  
      
     if mod(i,20) == 0
-        fprintf("Writing Last 20 Records to File %s",evalFileName);
+        fprintf("\n=================================\n");
+        warning("Writing Last 20 Records to File %s",evalFileName);
+        fprintf("\n================================\n");
      if X_created
       if append_mode && isfile(evalFileName)
         Prev = xlsread(strcat(eval_dir,evalFileName));
@@ -66,7 +68,7 @@ for i = 1:num_pages
        fprintf("\nFILE DATA MISMATCH,%d not processed\n",i); 
        continue;
     end
-     fprintf("Processing image: %d (%s) , Bin: %d(%s) , XML: %d (%s)",i,file_names{i},i,bin_names{i},xml_i,xml_names{xml_i});
+     fprintf("\nProcessing image: %d (%s) , Bin: %d(%s) , XML: %d (%s)",i,file_names{i},i,bin_names{i},xml_i,xml_names{xml_i});
     img = imread(strcat(dir_in,file_names{i}));  
   
     t = logical(imread(strcat(dir_in,bin_names{i})));
@@ -76,14 +78,14 @@ for i = 1:num_pages
     xmlS = xml2struct(strcat(dir_in,xml_names{xml_i}));
     test =  numel(xmlS.images.image.words.word);
     catch
-       fprintf("XML FILE HAS WRONG FORMAT,IGNORING....");
+       fprintf("\nXML FILE HAS WRONG FORMAT,IGNORING....\n");
         xml_i = xml_i +1;
        continue;
     end
  
     
     
-    [row,col] = size(img);
+    [row,col] = size(img)
     for word_no = 1: numel(xmlS.images.image.words.word)
        
         if numel(xmlS.images.image.words.word) > 1
@@ -93,17 +95,24 @@ for i = 1:num_pages
         end
         
         x1 = max(1,str2double(BB.x) - 5);
-        x2 = min(col,x1 + str2double(BB.width) + 5);
+        x2 = min(col,(x1 + str2double(BB.width) + 5));
         y1 = max(1,str2double(BB.y) - 5);
-        y2 = min(row,y1 +str2double(BB.height) + 5);
+        y2 = min(row,(y1 +str2double(BB.height) + 5));
+       
+        try 
+            scan_img = img(y1:y2,x1:x2);
+        catch
+           continue; 
+        end
         
-        scan_img = img(y1:y2,x1:x2);
-      %  imshow(scan_img); %%Comment out for speed
+        
+    
+        imshow(scan_img); %%Comment out for speed
         
         [finalA,NumImages,~,~] = Algo2001_3(scan_img,2,StabilityPredictor); 
          close all
         correct_img = bin_img(y1:y2,x1:x2);
-     %   imshow(correct_img);  %%Comment out for speed
+        imshow(correct_img);  %%Comment out for speed
         EX =  AddToEvaluationSheet(finalA,correct_img);
         if EX(1,1) == 0
            continue; 
@@ -119,18 +128,7 @@ for i = 1:num_pages
    
         
     xml_i = xml_i + 1;
-    if mod(i,20) == 0
-        fprintf("Writing Last 20 Records to File %s",evalFileName);
-     if X_created
-      if append_mode && isfile(evalFileName)
-        Prev = xlsread(strcat(eval_dir,evalFileName));
-         xlswrite(strcat(eval_dir,evalFileName),[Prev;X]);
-      else
-         xlswrite(strcat(eval_dir,evalFileName),X); 
-      end
-     end
-        
-    end
+
  
  
   %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED

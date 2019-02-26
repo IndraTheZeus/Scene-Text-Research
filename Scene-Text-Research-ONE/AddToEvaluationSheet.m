@@ -1,6 +1,7 @@
 function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
 
     append_mode = true;
+     evalX = zeros(1,7);
     if size(GeneratedImgs,1) ~= size(CorrectImage,1) ||  size(GeneratedImgs,2) ~= size(CorrectImage,2)
         
        error("Generated Images and Correct Image dimension mismatch"); 
@@ -11,6 +12,9 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
     BWImages = zeros(size(GeneratedImgs));
     saveC = CorrectImage;
       [row,col] = size(CorrectImage);
+      if row == 0 || col == 0
+         return 
+      end
            textClass = 1 - mode([CorrectImage(row,:) CorrectImage(1,:) CorrectImage(2:max(2,row-1),1)' CorrectImage(2:max(2,row-1),col)']);
    
        if textClass == 0
@@ -31,7 +35,7 @@ function evalX = AddToEvaluationSheet(GeneratedImgs,CorrectImage)
         imshow(CorrectImage);
         figure('Name','No Components in Ground truth');
         imshow(saveC);
-        evalX = zeros(1,7);
+       
         return
      end
 
