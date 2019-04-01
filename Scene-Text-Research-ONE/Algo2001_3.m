@@ -17,7 +17,7 @@
  rgb_BinImages = false(row,col,NUM_BIN_IMAGES);
  
  
-  %stage = 1
+  stage = 1
  q_offset = 0;
  DistanceMatrix = zeros(row,col);
  %fprintf("\nMapping Image Pixels to Distance Matrix");
@@ -32,50 +32,30 @@
      end
  end
  
+ fprintf("\nMapping Image to Bins");
  for i = 1:numel(BinSizes)
    main_offset = ceil(MAX_DISTANCE/BinSizes(i));
    k = ceil((BinSizes(i)/2)) -1;
-   % fprintf("\nMapping Image to Bin Size: %d",BinSizes(i));
+  
    for r = 1:row
         for c = 1:col
      
        value = DistanceMatrix(r,c);
-%        x = q_offset+1;
-%         for se=(q_offset+1):(q_offset+main_offset)
-%             if BinMatrix(x,3)>value || BinMatrix(x,4) < value
-%                  x = x+1;
-%                   continue;
-%             else
-%                 break;
-%             end
-%         end
          x = q_offset+floor(value/BinSizes(i))+1;
           rgb_BinImages(r,c,x) = 1;
           if BinMatrix(x,3) > value || BinMatrix(x,4) < value
-              fprintf("\nERROR; VALUES ARE NOT MAPPING TO BIN_MATRIX for pixel value= %d , Mapped to Main Bin = %d\n",value,x);
-%               BinMatrix   
+              BinMatrix
+              [value,x]
+              error("VALUES ARE NOT MAPPING TO BIN_MATRIX"); 
           end
-%           y = q_offset + main_offset + 1;
-%           y_set = false;
-%         for se=(q_offset + main_offset + 1):(q_offset + 2*main_offset -1)
-%             if BinMatrix(y,3)>value || BinMatrix(y,4) < value
-%                   y = y + 1;
-%                   continue;
-%             else
-%                 y_set = true;
-%                 break;
-%             end
-%         end 
-%         if y_set
-%            rgb_BinImages(r,c,y) = 1; 
-%         end
+
          if value>k && value<(((main_offset-1)*BinSizes(i))+k)        %%CHANGES IN MAX DISTANCE MADE
             y = q_offset+main_offset+ceil((value-k)/BinSizes(i));
             rgb_BinImages(r,c,y) = 1;
           if BinMatrix(y,3) > value || BinMatrix(y,4) < value
-              fprintf("\nERROR; VALUES ARE NOT MAPPING TO BIN_MATRIX for pixel value= %d , Mapped to Offset Bin = %d, k = %d Main_offset*BinSizes = %d\n",value,y,k,(((main_offset-1)*BinSizes(i))+k+1));
-%                BinMatrix
-               
+              BinMatrix
+              [value,x]
+              error("VALUES ARE NOT MAPPING TO BIN_MATRIX");  
           end
          end
            
@@ -85,14 +65,13 @@
     q_offset = q_offset+2*main_offset-1;
  end
  
-% fprintf("\n.....Removing Unncessary Components.....");
- rgb_BinImages = ReduceToMainCCs(rgb_BinImages);   % Remove small points
  
  stage = 2;
  if stage>end_stage
     rgb_SUImages = rgb_BinImages;
  else
-     %stage = 2
+     stage = 2
+     fprintf("\nStabilizing Images....");
      rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
 %     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
     stage = 3;

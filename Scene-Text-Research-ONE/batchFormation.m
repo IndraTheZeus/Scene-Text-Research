@@ -32,33 +32,67 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     %[img,mask,inpainted_img,normalised3] = main_function(img);
  %   [finalA,NumImages] = Algo2001_3(img,1);
    
- [finalA,NumImages,~,~] = Algo2001_3(img,2,StabilityPredictor); 
+ if ~exist(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'file')
+     finalA = Algo2001_3(img,2,StabilityPredictor);
+ save(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
+ finalA = BackGroundEliminate(finalA); 
+  
+ else
+    load(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
+ end
+ 
  close all
  
  
- AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
+  
+%  AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
  
- continue
- 
+
+ NumImages = size(finalA,3);
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
- %added_img = false(size(scaled_final_img));
- for sc = NumImages:-1:1
+ added_img = zeros(size(scaled_final_img));
+ for sc = 1:ceil(NumImages/2)
      fprintf("\nScaling Components in Bin No. %d",sc);
      
-     if(finalA(:,:,sc) == 0)
-         continue;
-     end
-     f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-     label = max(scaled_final_img(f_neighbors)) + 1;
-    
-    scaled_final_img(finalA(:,:,sc)) = sc;
-   % added_img = logical(added_img + finalA(:,:,sc));
+%      if(finalA(:,:,sc) == 0)
+%          continue;
+%      end
+%      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
+%      label = max(scaled_final_img(f_neighbors)) + 1;
+%     
+%     scaled_final_img(finalA(:,:,sc)) = sc;
+    added_img = added_img + (double(finalA(:,:,sc)).*sc);
  end
  
- max_map = scaled_final_img > 0;
- min_label = min(min(scaled_final_img(max_map)));
- max_label = max(max(scaled_final_img(max_map)));
- scaled_final_img(max_map) = scaled_final_img(max_map) - min_label;
+ for sc = (ceil(NumImages/2)+1):NumImages
+      added_img = added_img + (double(finalA(:,:,sc)).*(NumImages+1-sc));
+ end
+ close all
+ C = unique(added_img);
+
+ imagesc(added_img)
+%  figure('Name','Added Image')
+%  imshow(logical(added_img))
+% save('Added_Image.mat','added_img')
+%  T = adaptthresh(added_img,0.8);
+ %binarized_img = imbinarize(added_img,T);
+ binarized_img = added_img > 0;%median(C(C>0))*0.25;
+ figure('Name','Binarized Image')
+ imshow(binarized_img)
+ 
+    name = strrep(file_names{i},strcat('.',file_ext),'');
+    
+    name = strcat(name,'_Binarized');
+   
+    saveFile3=strcat(dir_results,name,strcat('.',out_ext));
+ 
+    imwrite(binarized_img,saveFile3,out_ext);
+ 
+  continue
+%  max_map = scaled_final_img > 0;
+%  min_label = min(min(scaled_final_img(max_map)));
+%  max_label = max(max(scaled_final_img(max_map)));
+%  scaled_final_img(max_map) = scaled_final_img(max_map) - min_label;
 
  %  figure
 %  imagesc(scaled_final_img)
@@ -69,24 +103,24 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 % imwrite(scaled_final_img,SaveFile,'jpg');
 
 
- figure
-image(scaled_final_img)
-figure
-imagesc(scaled_final_img)
-savefig(strcat(dir_results,"ColorRegionsFigure_",file_names{i},".fig"))
-show = mat2gray(scaled_final_img);
-figure
-imshow(show)
 %  figure
-%  imshow(display_img)
- savefig(strcat(dir_results,"RegionsFigure_",file_names{i},".fig"))
-  display_img = finalA;
+% image(scaled_final_img)
+% figure
+% imagesc(scaled_final_img)
+% savefig(strcat(dir_results,"ColorRegionsFigure_",file_names{i},".fig"))
+% show = mat2gray(scaled_final_img);
+% figure
+% imshow(show)
+% %  figure
+% %  imshow(display_img)
+%  savefig(strcat(dir_results,"RegionsFigure_",file_names{i},".fig"))
+%   display_img = finalA;
 
 
 
 
    for j=(1:NumImages)
-       F_img = display_img(:,:,j);
+       F_img = finalA(:,:,j);
     name = strrep(file_names{i},strcat('.',file_ext),'');
     %name1=strcat(name,'_1img');
     %name2=strcat(name,'_2mask');
