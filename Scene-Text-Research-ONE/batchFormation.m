@@ -3,9 +3,21 @@
 function batchFormation(dir_in, dir_results, file_ext,out_ext,StabilityPredictor)
 disp('WAIT! Execution begining...');
 
+TPs = 0;
+PredictedPositives = 0;
+ActualPositives = 0;
+
+ground_truth_dir = 'E:\ResearchFiles\DATA\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\ICDAR03\ICDAR03\icdar03_ground_truth\';
+    
+
+    
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
+
+gt_listing = dir(strcat(ground_truth_dir,'*.','tiff'));
+
 file_names = {listing.name};
+
 
 % number of pages in the directory with this file extension
 num_pages = length(file_names);
@@ -24,7 +36,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 %     
     img = imread(strcat(dir_in,file_names{i}));   %% Commented out reading
 %                                                     %% as reading Done by LoadData
-%  
+ % img = rgb2gray(img);
     
     %[row,col,layer] = size(img);
     % call the text line extraction code
@@ -33,11 +45,12 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  %   [finalA,NumImages] = Algo2001_3(img,1);
    
  if ~exist(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'file')
-     finalA = Algo2001_3(img,2,StabilityPredictor);
+     [finalA,~,BinSizes,MAX_DISTANCE] = Algo2001_3(img,2,StabilityPredictor);
  save(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
- finalA = BackGroundEliminate(finalA); 
-  
+ %finalA = BackGroundEliminate(finalA);   
  else
+     MAX_DISTANCE = 442;
+    BinSizes = generateBins(MAX_DISTANCE);
     load(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
  end
  
@@ -48,25 +61,45 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 %  AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
  
 
- NumImages = size(finalA,3);
  scaled_final_img = zeros(size(finalA,1),size(finalA,2));
  added_img = zeros(size(scaled_final_img));
- for sc = 1:ceil(NumImages/2)
-     fprintf("\nScaling Components in Bin No. %d",sc);
-     
-%      if(finalA(:,:,sc) == 0)
-%          continue;
-%      end
-%      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
-%      label = max(scaled_final_img(f_neighbors)) + 1;
-%     
-%     scaled_final_img(finalA(:,:,sc)) = sc;
-    added_img = added_img + (double(finalA(:,:,sc)).*sc);
+ q_offset = 0;
+ for bin_no = 1:ceil(numel(BinSizes)/2)
+     fprintf("Combining Bin %d\n",bin_no);
+     main_offset = ceil(MAX_DISTANCE/BinSizes(bin_no));
+     weight = bin_no;
+     for img_no = (q_offset+1):(q_offset+2*main_offset-1)
+         added_img = added_img + (double(finalA(:,:,img_no)).*weight); 
+     end
+     q_offset = q_offset + 2*main_offset - 1;
  end
  
- for sc = (ceil(NumImages/2)+1):NumImages
-      added_img = added_img + (double(finalA(:,:,sc)).*(NumImages+1-sc));
+  for bin_no = (ceil(numel(BinSizes)/2)+1):numel(BinSizes)
+       fprintf("Combining Bin %d\n",bin_no);
+     main_offset = ceil(MAX_DISTANCE/BinSizes(bin_no));
+     weight = (numel(BinSizes)+1-i);
+     for img_no = (q_offset+1):(q_offset+2*main_offset-1)
+         added_img = added_img + (double(finalA(:,:,img_no)).*weight); 
+     end
+     q_offset = q_offset + 2*main_offset - 1;
  end
+ 
+%  for sc = 1:ceil(NumImages/2)
+%      fprintf("\nScaling Components in Bin No. %d",sc);
+%      
+% %      if(finalA(:,:,sc) == 0)
+% %          continue;
+% %      end
+% %      f_neighbors = conv2(finalA(:,:,sc),[1,1,1;1,0,1;1,1,1],'same')>0;
+% %      label = max(scaled_final_img(f_neighbors)) + 1;
+% %     
+% %     scaled_final_img(finalA(:,:,sc)) = sc;
+%     added_img = added_img + (double(finalA(:,:,sc)).*sc);
+%  end
+%  
+%  for sc = (ceil(NumImages/2)+1):NumImages
+%       added_img = added_img + (double(finalA(:,:,sc)).*(NumImages+1-sc));
+%  end
  close all
  C = unique(added_img);
 
@@ -76,7 +109,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 % save('Added_Image.mat','added_img')
 %  T = adaptthresh(added_img,0.8);
  %binarized_img = imbinarize(added_img,T);
- binarized_img = added_img > 0;%median(C(C>0))*0.25;
+ binarized_img = added_img > median(C(C>0));
  figure('Name','Binarized Image')
  imshow(binarized_img)
  
@@ -88,33 +121,27 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  
     imwrite(binarized_img,saveFile3,out_ext);
  
-  continue
-%  max_map = scaled_final_img > 0;
-%  min_label = min(min(scaled_final_img(max_map)));
-%  max_label = max(max(scaled_final_img(max_map)));
-%  scaled_final_img(max_map) = scaled_final_img(max_map) - min_label;
 
- %  figure
-%  imagesc(scaled_final_img)
- %The display img is the one displayed
- %figure
- %imshow(added_img)
- %SaveFile = strcat("BinCombined_",strrep(file_names{i},strcat('.',file_ext),''),'.jpg');
-% imwrite(scaled_final_img,SaveFile,'jpg');
-
-
-%  figure
-% image(scaled_final_img)
-% figure
-% imagesc(scaled_final_img)
-% savefig(strcat(dir_results,"ColorRegionsFigure_",file_names{i},".fig"))
-% show = mat2gray(scaled_final_img);
-% figure
-% imshow(show)
-% %  figure
-% %  imshow(display_img)
-%  savefig(strcat(dir_results,"RegionsFigure_",file_names{i},".fig"))
-%   display_img = finalA;
+    
+    GT = logical(imread(strcat(ground_truth_dir,strrep(file_names{i},strcat('.',file_ext),''),'.tif'))); 
+    figure('Name','GroundTruth');
+    imshow(GT)
+    
+    
+    mask = double(GT) + double(binarized_img);
+    
+    curr_precision = sum(sum(mask == 2))/(sum(sum(binarized_img)));
+    curr_recall = sum(sum(mask == 2))/(sum(sum(GT)));
+    
+    fprintf("On Current Image:: Precison: %d , Recall: %d\n",curr_precision,curr_recall);
+   
+    TPs = TPs +  sum(sum(mask == 2));
+    PredictedPositives = (sum(sum(binarized_img))) +  PredictedPositives;
+    ActualPositives = ActualPositives + (sum(sum(GT)));
+    
+    fprintf("OVERALL :: Precison: %d ,Recall: %d\n",(TPs/PredictedPositives),(TPs/ActualPositives));
+    
+    continue
 
 
 

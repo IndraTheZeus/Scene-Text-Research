@@ -1,7 +1,7 @@
  function [rgb_SUImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3( image,end_stage,StabilityPredictor )
   %reduced = 186;
  
- 
+
  image = histeq(image);
  
 
