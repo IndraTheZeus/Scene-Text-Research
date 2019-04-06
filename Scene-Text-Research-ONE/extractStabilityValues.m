@@ -1,8 +1,11 @@
 function [X,y] = extractStabilityValues(img,region,curr_obj_region,BinImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE,StabilityCheckMatrix,BinMatrix)
 
 %%Params for Feature Extraction
-    max_growth = 0.2; %The Maximum growth allowed on increase in Bin Size
-    max_positive_label_deviation = 0.25; %The Max deviation from k-means image that can also be labelled positive
+    max_growth = 0.5; %The Maximum growth allowed on increase in Bin Size
+    max_positive_label_deviation = 1; %The Max deviation from k-means image that can also be labelled positive
+    
+    IOU_thres = 0.5; % IOU for labelling positive,reduce to increase accpetance
+    
     %TODO:: NEED TO LABEL CORRECT POSITIVE REGIONS
     
     
@@ -368,9 +371,9 @@ q_offset = 0;
     %For 1st Level Bins
        for img_no = (q_offset+1):(q_offset+main_offset) 
         if img_no ~= (q_offset+main_offset)
-          scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset)));
+          scan_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset))));
         else
-           scan_img = logical(BinImages(:,:,img_no));
+           scan_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)));
         end
         label_scan_img = bwlabel(scan_img);
         CC_scan_img = bwconncomp(scan_img);
@@ -390,12 +393,12 @@ q_offset = 0;
            end
         %The Smaller range against which to check stability
       if img_no > q_offset+1 && img_no<(q_offset+main_offset)
-         lower_range_check_img = logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no));
+         lower_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
       else
          if img_no == q_offset+main_offset
-           lower_range_check_img = logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no)); 
+           lower_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no))); 
          else
-          lower_range_check_img = logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no));
+          lower_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no)));
          end
       end
       lower_range_check_CC = bwconncomp(lower_range_check_img);
@@ -408,7 +411,7 @@ q_offset = 0;
         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
 
 
-      upper_range_check_img = logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2));
+      upper_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
       upper_range_check_CC = bwconncomp(upper_range_check_img);
       
       lower_range_bwimage = bwlabel(lower_range_check_img);
@@ -421,10 +424,10 @@ q_offset = 0;
         if overlap_comps(1,overlap_comp_no) == 0
             break;
         end
-           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),2); %Make to 1 for speed
-           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),2);
+           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),1); %Make to 1 for speed
+           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),1);
       
-        if lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0    
+        if lower_range_overlap_comp(1,1) == 0 %lower_range_overlap_comp(1,2) ~= 0 || 
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
@@ -435,7 +438,7 @@ q_offset = 0;
            continue;
         end
         
-        if upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0    
+        if  upper_range_overlap_comp(1,1) == 0 %upper_range_overlap_comp(1,2) ~= 0 ||   
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
@@ -484,7 +487,9 @@ q_offset = 0;
             
             %Label the closest component to the actual object region
              deviation = abs(comp_num_of_pixels - numel(curr_obj_region));
-             if (deviation <= (max_positive_label_deviation)*comp_num_of_pixels) && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels)
+             
+             IOU = numel(intersect(curr_obj_region,CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}))/numel(union(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)},curr_obj_region));
+             if (IOU > IOU_thres) &&(deviation <= (max_positive_label_deviation)*comp_num_of_pixels) && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
                   y(training_entry,1) = 1;
                    if show_results
                      show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
@@ -500,9 +505,9 @@ q_offset = 0;
 %                     continue;
 %                  end
 
-                    if false %deviation == min_deviation && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels)
-                        y(training_entry,1) = 1;
-                 
+                    if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
+                        training_entry = training_entry - 1;
+                        continue;
 %                        show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
 %                       figure('Name',strcat("       EXCEPTIONAL::The Positive Example(Lower Range): ",int2str(img_no)));
 %                       imshow(show_img);
@@ -583,7 +588,7 @@ q_offset = 0;
    
    % For 2nd Level Bins
      for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1) 
-        scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1)));
+        scan_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))));
         
       
         label_scan_img = bwlabel(scan_img);
@@ -602,19 +607,15 @@ q_offset = 0;
          if((img_no > NUM_BIN_IMAGES) || (lower_overlap_bin_no> NUM_BIN_IMAGES))              
               fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);            
          end
-        lower_range_check_img = logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no));
+        lower_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
 
       lower_range_check_CC = bwconncomp(lower_range_check_img);
-      %The Larger Range against which to check stability
-     
-   %         lower_bin_limit = (img_no-q_offset-1)*BinSizes(1,i);
-%         k = ceil((BinSizes(1,i)/2)) -1;
-%         upper_bin_limit = min(440,k+(img_no-q_offset)*BinSizes(1,i));
+
         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
 
 
-      upper_range_check_img = logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2));
+      upper_range_check_img = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
       upper_range_check_CC = bwconncomp(upper_range_check_img);
       
       lower_range_bwimage = bwlabel(lower_range_check_img);
@@ -630,7 +631,7 @@ q_offset = 0;
            lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),2); %Make to 1 for speed
            upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}),2);
       
-         if lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0    
+         if lower_range_overlap_comp(1,1) == 0 %|| lower_range_overlap_comp(1,2) ~= 0 ||    
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
@@ -641,7 +642,7 @@ q_offset = 0;
            continue;
         end
         
-        if upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0    
+        if  upper_range_overlap_comp(1,1) == 0 %upper_range_overlap_comp(1,2) ~= 0 ||   
            fprintf("\n Wrong Calculation in LOWER Range Check Image");
            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
            error_figure(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
@@ -691,28 +692,25 @@ q_offset = 0;
             
             %Label the closest component to the actual object region
              deviation = abs(comp_num_of_pixels - numel(curr_obj_region));
-             if (deviation <= (max_positive_label_deviation)*comp_num_of_pixels) && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels)
-                  y(training_entry,1) = 1;
-                  if show_results
-                 show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
-                 figure('Name',strcat("       The Positive Example(Lower Range): ",int2str(img_no)));
-                 imshow(show_img);
-                 show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
-                  end
-%                  
-             else
-     
-                    if false %deviation == min_deviation && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels)
-                        y(training_entry,1) = 1;
+             IOU = numel(intersect(curr_obj_region,CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}))/numel(union(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)},curr_obj_region));
+             
+             if (IOU > IOU_thres) &&(deviation <= (max_positive_label_deviation)*comp_num_of_pixels) && lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
+                 y(training_entry,1) = 1;
+                 if show_results
+                     show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
+                     figure('Name',strcat("       The Positive Example(Lower Range): ",int2str(img_no)));
+                     imshow(show_img);
+                     show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+                 end
                  
-                       show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
-                      figure('Name',strcat("       EXCEPTIONAL::The Positive Example(Lower Range): ",int2str(img_no)));
-                      imshow(show_img);
-                      show_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;      
-                    else
-                         y(training_entry,1) = 0;
-                    end
-                   
+             else 
+                 if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
+                     training_entry = training_entry - 1;
+                     continue;
+                 else
+                     y(training_entry,1) = 0;
+                 end
+                 
              end
               
              X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)});

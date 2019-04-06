@@ -29,7 +29,7 @@ fprintf('Total number of pages = %d\n', num_pages);
 for i = 1:num_pages  %%CONVERT TO 1:1 
   %if((i>=120)&&(i<125))  
  
-   % fprintf('Processing Image No: %d\n', i);  %%Commented out,reading done by load data  
+    fprintf('Processing Image No: %d\n', i);  %%Commented out,reading done by load data  
 %     
 %    %% load the image from the directory
 %  
@@ -47,11 +47,12 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  if ~exist(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'file')
      [finalA,~,BinSizes,MAX_DISTANCE] = Algo2001_3(img,2,StabilityPredictor);
  save(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
- %finalA = BackGroundEliminate(finalA);   
+  finalA = BackGroundEliminate(finalA);   
  else
      MAX_DISTANCE = 442;
     BinSizes = generateBins(MAX_DISTANCE);
     load(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
+     finalA = BackGroundEliminate(finalA);  
  end
  
  close all
@@ -59,30 +60,44 @@ for i = 1:num_pages  %%CONVERT TO 1:1
  
   
 %  AddToEvaluationSheet(finalA, wolf(rgb2gray(img),size(img),0.3),strcat(dir_results,"Evaluate.xlsx"));  %CHANGE THE REGION EXTRACTIOMN FUNCION IF NEEDED
- 
 
- scaled_final_img = zeros(size(finalA,1),size(finalA,2));
- added_img = zeros(size(scaled_final_img));
+    
+ added_img =  zeros(size(finalA,1),size(finalA,2));
  q_offset = 0;
+ fprintf("\nCombining Bins....");
  for bin_no = 1:ceil(numel(BinSizes)/2)
-     fprintf("Combining Bin %d\n",bin_no);
+     %fprintf("Combining Bin %d\n",bin_no);
      main_offset = ceil(MAX_DISTANCE/BinSizes(bin_no));
-     weight = bin_no;
+     if bin_no == 1
+         weight = 0;
+     else
+      weight = bin_no;
+     end
      for img_no = (q_offset+1):(q_offset+2*main_offset-1)
+         
+
+         
          added_img = added_img + (double(finalA(:,:,img_no)).*weight); 
      end
      q_offset = q_offset + 2*main_offset - 1;
  end
  
   for bin_no = (ceil(numel(BinSizes)/2)+1):numel(BinSizes)
-       fprintf("Combining Bin %d\n",bin_no);
+%        fprintf("Combining Bin %d\n",bin_no);
      main_offset = ceil(MAX_DISTANCE/BinSizes(bin_no));
      weight = (numel(BinSizes)+1-i);
      for img_no = (q_offset+1):(q_offset+2*main_offset-1)
+         
          added_img = added_img + (double(finalA(:,:,img_no)).*weight); 
      end
      q_offset = q_offset + 2*main_offset - 1;
- end
+  end
+ 
+
+    
+
+
+ 
  
 %  for sc = 1:ceil(NumImages/2)
 %      fprintf("\nScaling Components in Bin No. %d",sc);
@@ -109,7 +124,7 @@ for i = 1:num_pages  %%CONVERT TO 1:1
 % save('Added_Image.mat','added_img')
 %  T = adaptthresh(added_img,0.8);
  %binarized_img = imbinarize(added_img,T);
- binarized_img = added_img > median(C(C>0));
+ binarized_img = added_img > (0.25*median(C(C>0)));
  figure('Name','Binarized Image')
  imshow(binarized_img)
  
@@ -130,16 +145,22 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     
     mask = double(GT) + double(binarized_img);
     
-    curr_precision = sum(sum(mask == 2))/(sum(sum(binarized_img)));
-    curr_recall = sum(sum(mask == 2))/(sum(sum(GT)));
+    if sum(sum(mask == 2)) == 0
+        curr_precision =0;
+        curr_recall =0;
+    else
+        curr_precision = sum(sum(mask == 2))/(sum(sum(binarized_img)));
+        curr_recall = sum(sum(mask == 2))/(sum(sum(GT)));
+    end
+   
     
-    fprintf("On Current Image:: Precison: %d , Recall: %d\n",curr_precision,curr_recall);
+    fprintf("\nOn Current Image:: Precison: %f , Recall: %f",curr_precision,curr_recall);
    
     TPs = TPs +  sum(sum(mask == 2));
     PredictedPositives = (sum(sum(binarized_img))) +  PredictedPositives;
     ActualPositives = ActualPositives + (sum(sum(GT)));
     
-    fprintf("OVERALL :: Precison: %d ,Recall: %d\n",(TPs/PredictedPositives),(TPs/ActualPositives));
+    fprintf("\nOVERALL :: Precison: %f ,Recall: %f\n",(TPs/PredictedPositives),(TPs/ActualPositives));
     
     continue
 

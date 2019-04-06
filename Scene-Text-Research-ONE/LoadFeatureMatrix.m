@@ -1,5 +1,5 @@
 
-function [X,y,BinImages,NUM_BIN_IMAGES] = LoadFeatureMatrix(img)
+function [X,y,BinImages,NUM_BIN_IMAGES] = LoadFeatureMatrix(img,GT_dir,filename)
 
 %%FUNCTION TO EXTRACT FEATURES FROM EACH BOUNDING IMAGE AND CONNECTED
 %%COMPONENT AND STORE IT IN EXCEL SHEET
@@ -43,7 +43,14 @@ show_results = false;
     % load the image from the directory
     [row,col] = size(img);
     %region denotes the correct homogenous region
-    region = findInterestRegions(img);
+    
+    
+    region = logical(imread(strcat(GT_dir,filename)));
+    
+%     figure('Name','Original Image')
+%     imshow(img)
+%     figure('Name','Pixel Level GT')
+%     imshow(region)
      CC = bwconncomp(region);
      
      %Creating the Bin Images to extract features

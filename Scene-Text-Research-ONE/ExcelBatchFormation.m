@@ -1,19 +1,21 @@
 %%%%%%   batchFormation()
 
-function ExcelBatchFormation(dir_in, dir_results, file_ext,excel_file_ext,extractFromSheet)
+function ExcelBatchFormation(dir_in,GT_dir, dir_results, file_ext,excel_file_ext,extractFromSheet)
 disp('WAIT! Execution begining...');
 
 append_mode = false;
-output_filename = strcat(dir_results,"StabilityFeatures(0.2,0.25).xlsx");
+output_filename = strcat(dir_results,"StabilityFeatures(0.5,0.5).xlsx");
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
+GT_listing = dir(strcat(GT_dir,'*.','tif'));
+
 if extractFromSheet
     excel_listing = dir(strcat(dir_in,'*.',excel_file_ext));
     excel_file_names = {excel_listing.name};
 end
 file_names = {listing.name};
-
+GT_file_names = {GT_listing.name};
 % number of pages in the directory with this file extension
 num_pages = length(file_names);
 
@@ -57,7 +59,7 @@ for i = 1:num_pages
 
        end
      else
-        [FeaturesX,Labelsy,~,~] = LoadFeatureMatrix(img);
+        [FeaturesX,Labelsy,~,~] = LoadFeatureMatrix(img,GT_dir,GT_file_names{i});
           [rM,~] = size(FeaturesX);
           if ~f_init
              f_init = true;
@@ -65,7 +67,13 @@ for i = 1:num_pages
           end
          FeatureSet(training_entry:(training_entry+rM-1),:) = FeaturesX;
          FeatureLabel(training_entry:(training_entry+rM-1),:) = Labelsy;
-         training_entry = training_entry+rM; 
+         training_entry = training_entry+rM;
+         
+         if mod(i,10) == 0
+              fprintf("\nWriting Records till: %d ,total training entries: %d....\n",i,training_entry);
+              Data = [FeatureLabel FeatureSet];
+              xlswrite(output_filename,Data);   
+         end
      end
       
     end
@@ -93,7 +101,7 @@ end
         end
        
      else
-        fprintf("\nWriting New Data....\n");
+        fprintf("\nWriting ALL Records till: %d ,total training entries: %d....\n",i,training_entry);
         Data = [FeatureLabel FeatureSet];
 %         Data
         xlswrite(output_filename,Data); 
