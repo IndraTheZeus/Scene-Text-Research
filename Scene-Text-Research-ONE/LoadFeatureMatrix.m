@@ -4,8 +4,10 @@ function [X,y,BinImages,NUM_BIN_IMAGES] = LoadFeatureMatrix(img,GT_dir,filename)
 %%FUNCTION TO EXTRACT FEATURES FROM EACH BOUNDING IMAGE AND CONNECTED
 %%COMPONENT AND STORE IT IN EXCEL SHEET
 
+global scan_imgs label_scan_imgs upper_range_check_imgs lower_range_check_imgs upper_range_bwimages lower_range_bwimages
 
-show_results = false;
+
+show_results = true;
 
 
 %% Create The Feature Matrix X
@@ -24,6 +26,13 @@ show_results = false;
     % 11.Lower Range Increment Check
     % 12. Higher Range Increment Check
     
+    % 13. SVT
+    % 14. SVT difference lower range
+    % 15. SVT difference higher range
+    % 16. eHOG
+    % 17. eHOH difference lower range
+    % 18. eHOG difference higher range
+    
     % 13. 1. * 9.
     % 14. 2. * 9.
     % 15. 3. / 10.
@@ -31,7 +40,7 @@ show_results = false;
     % 17. 1. /10.
     % 18. 2. / 10. 
    
-     X = zeros(1,12);
+     X = zeros(1,18);
      training_entry = 1;
      y = false(1,1);
   
@@ -41,9 +50,9 @@ show_results = false;
         
     
     % load the image from the directory
-    [row,col] = size(img);
+    [row,col,~] = size(img);
     %region denotes the correct homogenous region
-    
+
     
     region = logical(imread(strcat(GT_dir,filename)));
     
@@ -51,19 +60,84 @@ show_results = false;
 %     imshow(img)
 %     figure('Name','Pixel Level GT')
 %     imshow(region)
-     CC = bwconncomp(region);
+    
      
      %Creating the Bin Images to extract features
      fprintf("\n  -- Creating the Bin Images  -- \n");
    [BinImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3(img,1);
-   
-   StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
-%     StabilityCheckMatrix
-    BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
-%     BinMatrix
+   fprintf("\n----- Preprocessing ----\n");
+    scan_imgs = false(row,col,NUM_BIN_IMAGES);
+    label_scan_imgs = zeros(row,col,NUM_BIN_IMAGES);
+    upper_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+    lower_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+    upper_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+    lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
     
+      StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
+      BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
     
-    %Iterate through each component and extract features
+   q_offset = 0;
+   for i = 1:8
+         main_offset = ceil(MAX_DISTANCE/BinSizes(i));
+%        k = ceil((BinSizes(i)/2)) -1;
+     for img_no = (q_offset+1):(q_offset+main_offset) 
+        if img_no ~= (q_offset+main_offset)
+          scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset))));
+        else
+           scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)));
+        end
+        label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+       
+       
+        lower_overlap_bin_no = img_no + main_offset-1;
+        upper_overlap_bin_no = img_no+main_offset;
+           if((img_no > NUM_BIN_IMAGES) || ((img_no+main_offset)> NUM_BIN_IMAGES && img_no~=q_offset+main_offset))        
+              fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);             
+           end
+        %The Smaller range against which to check stability
+      if img_no > q_offset+1 && img_no<(q_offset+main_offset)
+         lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+      else
+         if img_no == q_offset+main_offset
+           lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no))); 
+         else
+          lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no)));
+         end
+      end
+        upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
+        upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
+        upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
+        
+      lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
+      upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+     end
+     
+     for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1)
+         scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))));
+         
+         
+         label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+         
+         %The Smaller range against which to check stability
+         
+         lower_overlap_bin_no = img_no -main_offset;
+         upper_overlap_bin_no = img_no-main_offset+1;
+         if((img_no > NUM_BIN_IMAGES) || (lower_overlap_bin_no> NUM_BIN_IMAGES))
+             fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);
+         end
+         lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
+         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
+         upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
+         lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
+         upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+     end
+     
+     q_offset = q_offset + 2*main_offset - 1;
+   end
+
+     CC = bwconncomp(region);
+    %% Iterate through each component and extract features
     test_figures = false(size(region));
      for comp_no = 1:CC.NumObjects
         
@@ -71,7 +145,7 @@ show_results = false;
 
        if show_results
          test_figures(curr_obj_region) = 1;
-            figure('Name','           The K-Means Text Region');
+            figure('Name','           The GT Text Region');
             imshow(test_figures)
          test_figures(:,:) = 0;
        end
@@ -91,6 +165,16 @@ show_results = false;
 %            [rY,rX]
      end
     
+     fprintf("\n --- Extracting components for Non Text regions -- ");
+      [rX,rY] = extractStabilityValuesNonText(region,BinImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE,StabilityCheckMatrix,BinMatrix);
+       [rM,~] = size(rX);
+       fprintf(" :: No. of Non Text components: %d\n",rM);
+       
+      %Put extracted feature values into X and y
+         X(training_entry:(training_entry+rM-1),:) = rX;
+         y(training_entry:(training_entry+rM-1),:) = rY;
+         training_entry = training_entry+rM;
+       
 %      if show_results
 %         fprintf("\nExtracted Data: \n");
 %         [y X]

@@ -13,10 +13,11 @@ q_offset = 0;
        k = ceil((BinSizes(i)/2)) -1;
    
     %For 1st Level Bins
-       parfor img_no = (q_offset+1):(q_offset+main_offset)
+       for img_no = (q_offset+1):(q_offset+main_offset)
            close all
          %fprintf("\nProcessing Bin No.: %d",img_no);
          output_image = zeros(row,col);
+          palate = zeros(row,col);
         if img_no ~= (q_offset+main_offset)
           scan_img = logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset)));
         else
@@ -65,10 +66,10 @@ q_offset = 0;
        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
     for comp = 1:CC_scan_img.NumObjects
             FeatureValues = zeros(1,No_of_features);
-           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),2); %Make to 1 for speed
-           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
+           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),1); %Make to 1 for speed
+           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),1);
       
-        if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0)    
+        if   lower_range_overlap_comp(1,1) == 0 % (lower_range_overlap_comp(1,2) ~= 0 ||)    
             fprintf("\n Wrong Calculation in LOWER Range Check Image");
 %            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
 %            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -79,7 +80,7 @@ q_offset = 0;
            continue;
         end
         
-        if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )  
+        if   upper_range_overlap_comp(1,1) == 0  %(upper_range_overlap_comp(1,2) ~= 0 || )  
             fprintf("\n Wrong Calculation in LOWER Range Check Image");
 %            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
 %            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -162,16 +163,26 @@ q_offset = 0;
        
        
           %Adding the Higher Range Bins
-         
-
-               
-               
-     
-          
         FeatureValues(1,2) = (abs(numel(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)}) - numel(CC_scan_img.PixelIdxList{comp})))/numel(CC_scan_img.PixelIdxList{comp});        
         FeatureValues(1,5) = upper_check_stats(upper_range_overlap_comp(1,1)).EulerNumber - stats(comp).EulerNumber;       
         FeatureValues(1,8) = (abs(upper_check_stats(upper_range_overlap_comp(1,1)).Solidity - stats(comp).Solidity))/ stats(comp).Solidity;
         
+        
+           %Text Features Added
+            palate(:,:) = 0;
+            palate(CC_scan_img.PixelIdxList{comp}) = 1;
+            FeatureValues(1,13) = SWT(palate);
+            FeatureValues(1,16) = eHOG(palate);
+            
+            palate(:,:) = 0;
+            palate(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)}) = 1;
+            FeatureValues(1,14) = SWT(palate) - FeatureValues(1,13) ;
+            FeatureValues(1,17) = eHOG(palate) - FeatureValues(1,16);
+            
+            palate(:,:) = 0;
+            palate(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)}) = 1;
+            FeatureValues(1,15) = SWT(palate) - FeatureValues(1,13) ;
+            FeatureValues(1,18) = eHOG(palate) - FeatureValues(1,16);
 
         [isStable] = PredictStability(FeatureValues,StabilityPredictor);
         
@@ -186,9 +197,10 @@ q_offset = 0;
   
    
    % For 2nd Level Bins
-     parfor img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1) 
+     for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1) 
          close all
          output_image = zeros(row,col);
+         palate = zeros(row,col);
           % fprintf("\nProcessing Bin No.: %d",img_no);
         scan_img = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))));
         
@@ -223,10 +235,10 @@ q_offset = 0;
        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
     for comp = 1:CC_scan_img.NumObjects
             FeatureValues = zeros(1,No_of_features);
-           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),2); %Make to 1 for speed
-           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),2);
+           lower_range_overlap_comp = findLabels(lower_range_bwimage(CC_scan_img.PixelIdxList{comp}),1); %Make to 1 for speed
+           upper_range_overlap_comp = findLabels(upper_range_bwimage(CC_scan_img.PixelIdxList{comp}),1);
       
-         if  (lower_range_overlap_comp(1,2) ~= 0 || lower_range_overlap_comp(1,1) == 0 )   
+         if   lower_range_overlap_comp(1,1) == 0 %(lower_range_overlap_comp(1,2) ~= 0 ||  
             fprintf("\n Wrong Calculation in LOWER Range Check Image");
 %            figure('Name','ERROR:No Overlap Component !! K-means Component being scanned');
 %            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -237,7 +249,7 @@ q_offset = 0;
            continue;
         end
         
-        if  (upper_range_overlap_comp(1,2) ~= 0 || upper_range_overlap_comp(1,1) == 0 )    
+        if  upper_range_overlap_comp(1,1) == 0   %(upper_range_overlap_comp(1,2) ~= 0) ||   
             fprintf("\n Wrong Calculation in LOWER Range Check Image");
 %            figure('Name','ERROR:No Overlap Component!! K-means Component being scanned');
 %            error_figure(CC_scan_img.PixelIdxList{comp}) = 1;
@@ -282,46 +294,37 @@ q_offset = 0;
 %            error_figure(:,:) = 0;
            continue;
         end
-        
-            
-            
-
-              
-             FeatureValues(1,9) = numel(CC_scan_img.PixelIdxList{comp});
-               
-          
-           FeatureValues(1,10) = BinSizes(i);
-       
-       
-        
-           FeatureValues(1,11) = 2*k;
-      
-
-          
-       FeatureValues(1,3) = stats(comp).EulerNumber;
-       FeatureValues(1,6) = stats(comp).Solidity;  
-   
-
-           
-        
-          
-        FeatureValues(1,1) = (abs(numel(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)}) - numel(CC_scan_img.PixelIdxList{comp})))/numel(CC_scan_img.PixelIdxList{comp});        
-        FeatureValues(1,4) = lower_check_stats(lower_range_overlap_comp(1,1)).EulerNumber - stats(comp).EulerNumber;       
+  
+        FeatureValues(1,9) = numel(CC_scan_img.PixelIdxList{comp});
+        FeatureValues(1,10) = BinSizes(i); 
+        FeatureValues(1,11) = 2*k;
+        FeatureValues(1,3) = stats(comp).EulerNumber;
+        FeatureValues(1,6) = stats(comp).Solidity;
+        FeatureValues(1,1) = (abs(numel(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)}) - numel(CC_scan_img.PixelIdxList{comp})))/numel(CC_scan_img.PixelIdxList{comp});
+        FeatureValues(1,4) = lower_check_stats(lower_range_overlap_comp(1,1)).EulerNumber - stats(comp).EulerNumber;
         FeatureValues(1,7) = (abs(lower_check_stats(lower_range_overlap_comp(1,1)).Solidity - stats(comp).Solidity))/ stats(comp).Solidity;
-        
-            FeatureValues(1,12) = max(BinMatrix(upper_range_check_img_no_1,4),BinMatrix(upper_range_check_img_no_2,4))-min(BinMatrix(upper_range_check_img_no_1,3),BinMatrix(upper_range_check_img_no_2,3)); 
-          
-       
-       
-
-               
-     
-          
-        FeatureValues(1,2) = (abs(numel(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)}) - numel(CC_scan_img.PixelIdxList{comp})))/numel(CC_scan_img.PixelIdxList{comp});        
-        FeatureValues(1,5) = upper_check_stats(upper_range_overlap_comp(1,1)).EulerNumber - stats(comp).EulerNumber;       
+        FeatureValues(1,12) = max(BinMatrix(upper_range_check_img_no_1,4),BinMatrix(upper_range_check_img_no_2,4))-min(BinMatrix(upper_range_check_img_no_1,3),BinMatrix(upper_range_check_img_no_2,3));
+        FeatureValues(1,2) = (abs(numel(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)}) - numel(CC_scan_img.PixelIdxList{comp})))/numel(CC_scan_img.PixelIdxList{comp});
+        FeatureValues(1,5) = upper_check_stats(upper_range_overlap_comp(1,1)).EulerNumber - stats(comp).EulerNumber;
         FeatureValues(1,8) = (abs(upper_check_stats(upper_range_overlap_comp(1,1)).Solidity - stats(comp).Solidity))/ stats(comp).Solidity;
         
-
+        %Text Features Added
+        palate(:,:) = 0;
+        palate(CC_scan_img.PixelIdxList{comp}) = 1;
+        FeatureValues(1,13) = SWT(palate);
+        FeatureValues(1,16) = eHOG(palate);
+        
+        palate(:,:) = 0;
+        palate(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)}) = 1;
+        FeatureValues(1,14) = SWT(palate) - FeatureValues(1,13) ;
+        FeatureValues(1,17) = eHOG(palate) - FeatureValues(1,16);
+        
+        palate(:,:) = 0;
+        palate(upper_range_check_CC.PixelIdxList{upper_range_overlap_comp(1,1)}) = 1;
+        FeatureValues(1,15) = SWT(palate) - FeatureValues(1,13) ;
+        FeatureValues(1,18) = eHOG(palate) - FeatureValues(1,16);
+            
+            
         [isStable] = PredictStability(FeatureValues,StabilityPredictor);
         
         if isStable

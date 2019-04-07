@@ -1,8 +1,8 @@
 function [images] = ReduceToMainCCs(images)
 
-width_Thres = 0.01;
-height_Thres = 0.05;
-area_Thres = 0.00125;
+width_Thres = 0.1;
+height_Thres = 0.25;
+area_Thres = 0.0125;
 
 [row,col,numImages] = size(images);
 

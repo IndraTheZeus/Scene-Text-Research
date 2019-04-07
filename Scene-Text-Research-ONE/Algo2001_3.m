@@ -3,13 +3,10 @@
  
 
  image = histeq(image);
- 
 
  MAX_DISTANCE = 442;
  BinSizes = generateBins(MAX_DISTANCE);
- %BinSizes
  NUM_BIN_IMAGES = calculateNumBins_2Level(BinSizes,MAX_DISTANCE);
-% NUM_BIN_IMAGES
  [row,col,~] = size(image);
  
   BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
@@ -72,7 +69,7 @@
  else
      stage = 2
      fprintf("\nStabilizing Images....");
-     rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,12,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
+     rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,18,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
 %     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
     stage = 3;
     if stage>end_stage
