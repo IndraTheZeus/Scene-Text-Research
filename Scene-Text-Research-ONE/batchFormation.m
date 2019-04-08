@@ -2,7 +2,7 @@
 
 function batchFormation(dir_in, dir_results, file_ext,out_ext,StabilityPredictor)
 disp('WAIT! Execution begining...');
-
+global Matrix labels
 TPs = 0;
 PredictedPositives = 0;
 ActualPositives = 0;
@@ -31,11 +31,11 @@ for i = 1:num_pages  %%CONVERT TO 1:1
     
     fprintf('Processing Image No: %d\n', i);  %%Commented out,reading done by load data
     img = imread(strcat(dir_in,file_names{i}));   %% Commented out reading
-    
+    [Matrix,labels] = LoadFeatureMatrix(img,ground_truth_dir,gt_file_names{i});
     if ~exist(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'file')
         [finalA,~,BinSizes,MAX_DISTANCE] = Algo2001_3(img,2,StabilityPredictor);
         save(strcat(dir_results,"BinningMatObjects\","BinnedImages",strrep(file_names{i},strcat('.',file_ext),''),".mat"),'finalA');
-        finalA = BackGroundEliminate(finalA);
+%         finalA = BackGroundEliminate(finalA);
     else
         MAX_DISTANCE = 442;
         BinSizes = generateBins(MAX_DISTANCE);

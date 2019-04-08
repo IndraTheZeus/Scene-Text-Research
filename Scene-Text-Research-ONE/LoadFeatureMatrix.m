@@ -7,7 +7,7 @@ function [X,y,BinImages,NUM_BIN_IMAGES] = LoadFeatureMatrix(img,GT_dir,filename)
 global scan_imgs label_scan_imgs upper_range_check_imgs lower_range_check_imgs upper_range_bwimages lower_range_bwimages
 
 
-show_results = true;
+show_results = false;
 
 
 %% Create The Feature Matrix X
@@ -75,7 +75,7 @@ show_results = true;
     
       StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
       BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
-    
+    fprintf("\n ----- Processing ----");
    q_offset = 0;
    for i = 1:8
          main_offset = ceil(MAX_DISTANCE/BinSizes(i));

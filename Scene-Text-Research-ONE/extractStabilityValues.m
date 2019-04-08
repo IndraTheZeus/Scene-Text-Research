@@ -9,7 +9,7 @@ IOU_thres = 0.5; % IOU for labelling positive,reduce to increase accpetance
 %TODO:: NEED TO LABEL CORRECT POSITIVE REGIONS
 
 
-show_results = true;
+show_results = false;
 
 
 %Primary Features:
