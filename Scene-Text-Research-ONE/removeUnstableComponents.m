@@ -1,4 +1,5 @@
 function [StableImages] = removeUnstableComponents(BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,No_of_features,StabilityPredictor)
+global scan_imgs label_scan_imgs upper_range_check_imgs lower_range_check_imgs upper_range_bwimages lower_range_bwimages
 
 show_error = true;
 
@@ -42,28 +43,57 @@ show_results = false;
 % 18. 2. / 10.
 
 fprintf("\n----- Preprocessing ----\n");
-scan_imgs = false(row,col,NUM_BIN_IMAGES);
-label_scan_imgs = zeros(row,col,NUM_BIN_IMAGES);
-upper_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
-lower_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
-upper_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
-lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+% scan_imgs = false(row,col,NUM_BIN_IMAGES);
+% label_scan_imgs = zeros(row,col,NUM_BIN_IMAGES);
+% upper_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+% lower_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+% upper_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+% lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+
 
 %       StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
 %       BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
 
+
 q_offset = 0;
+
 for i = 1:8
     main_offset = ceil(MAX_DISTANCE/BinSizes(i));
     %        k = ceil((BinSizes(i)/2)) -1;
     for img_no = (q_offset+1):(q_offset+main_offset)
         if img_no ~= (q_offset+main_offset)
-            scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset))));
+            
+            if scan_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset))))
+               match = true;
+            else
+                match = false;
+            end
+            
+            if match == false
+                img_no
+                error("Mismatch");
+            end
+            
         else
-            scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)));
+            if scan_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)))
+               match = true;
+            else
+                match = false;
+            end
+            
+            if match == false
+                error("Mismatch");
+            end
         end
-        label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+        if label_scan_imgs(:,:,img_no) == bwlabel(scan_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
         
+        if match == false
+            error("Mismatch");
+        end
         
         lower_overlap_bin_no = img_no + main_offset-1;
         upper_overlap_bin_no = img_no+main_offset;
@@ -72,27 +102,93 @@ for i = 1:8
         end
         %The Smaller range against which to check stability
         if img_no > q_offset+1 && img_no<(q_offset+main_offset)
-            lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+            if lower_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)))
+                match = true;
+            else
+                match = false;
+            end
+            
+            if match == false
+                error("Mismatch");
+            end
         else
             if img_no == q_offset+main_offset
-                lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no)));
+                if lower_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no)))
+                    match = true;
+                else
+                    match = false;
+                end
+                
+                if match == false
+                    error("Mismatch");
+                end
             else
-                lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no)));
+                if lower_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no)))
+                    match = true;
+                else
+                    match = false;
+                end
+                
+                if match == false
+                    error("Mismatch");
+                end
             end
         end
         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
-        upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
+        if upper_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)))
+            match = true;
+        else
+            match = false;
+        end
         
-        lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
-        upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+        if match == false
+            error("Mismatch");
+        end
+        
+        if lower_range_bwimages(:,:,img_no) == bwlabel(lower_range_check_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
+        
+        if upper_range_bwimages(:,:,img_no) == bwlabel(upper_range_check_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
     end
     
     for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1)
-        scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))));
+        if scan_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            img_no
+            error("Mismatch");
+        end
         
         
-        label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+        if label_scan_imgs(:,:,img_no) == bwlabel(scan_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
         
         %The Smaller range against which to check stability
         
@@ -101,22 +197,48 @@ for i = 1:8
         if((img_no > NUM_BIN_IMAGES) || (lower_overlap_bin_no> NUM_BIN_IMAGES))
             fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);
         end
-        lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+        if lower_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
-        upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
-        lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
-        upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+        if upper_range_check_imgs(:,:,img_no) == ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
+        if lower_range_bwimages(:,:,img_no) == bwlabel(lower_range_check_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
+        if upper_range_bwimages(:,:,img_no) == bwlabel(upper_range_check_imgs(:,:,img_no))
+            match = true;
+        else
+            match = false;
+        end
+        
+        if match == false
+            error("Mismatch");
+        end
     end
     
     q_offset = q_offset + 2*main_offset - 1;
 end
-
-
-y = false(1,1);
-X = zeros(1,18);
-training_entry = 0;
-
 
 
 %   NumImages = NUM_BIN_IMAGES;
@@ -137,7 +259,7 @@ show_img = false(row,col);
 
 
 %% Next we extract the Values for each Bin. Correct Components those with pixels within min Variance In Component Size
-
+fprintf(" --- Stabilizing ----- \n");
 q_offset = 0;
 for i = 1:8 %Must change Loop for change in Bin
     
@@ -166,10 +288,10 @@ for i = 1:8 %Must change Loop for change in Bin
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
         stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         
-        
+      
         for overlap_comp_no = 1:CC_scan_img.NumObjects
             
             FeatureValues = zeros(1,18);
@@ -280,14 +402,14 @@ for i = 1:8 %Must change Loop for change in Bin
             FeatureValues(1,15) = SWT(palate) - FeatureValues(1,13) ;
             FeatureValues(1,18) = eHOG(palate) - FeatureValues(1,16);
             
-            isStable = PredictStability(FeatureValues,StabilityPredictor);
+            [isStable] = PredictStability(FeatureValues,StabilityPredictor);
             
-            if isStable == true
+            if isStable
                 output_image(CC_scan_img.PixelIdxList{overlap_comp_no}) = 1;
             end
             
         end
-        StableImages(:,:,img_no) = output_image;
+        StableImages(:,:,img_no) = output_image(:,:);
         
     end
     
@@ -311,8 +433,8 @@ for i = 1:8 %Must change Loop for change in Bin
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
         stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         for overlap_comp_no = 1:CC_scan_img.NumObjects
             FeatureValues = zeros(1,18);
             
@@ -418,14 +540,14 @@ for i = 1:8 %Must change Loop for change in Bin
             FeatureValues(1,15) = SWT(palate) - FeatureValues(1,13) ;
             FeatureValues(1,18) = eHOG(palate) - FeatureValues(1,16);
             
-            isStable = PredictStability(FeatureValues,StabilityPredictor);
+            [isStable] = PredictStability(FeatureValues,StabilityPredictor);
             
-            if isStable == true
+            if isStable
                 output_image(CC_scan_img.PixelIdxList{overlap_comp_no}) = 1;
             end
             
         end
-        StableImages(:,:,img_no) = output_image;
+        StableImages(:,:,img_no) = output_image(:,:);
         
     end
     

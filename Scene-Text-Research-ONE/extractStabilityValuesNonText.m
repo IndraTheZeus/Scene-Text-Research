@@ -96,8 +96,8 @@ q_offset = 0;
       upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
       
        stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-       upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+       upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
        
       
     for overlap_comp_no = 1:CC_scan_img.NumObjects
@@ -247,8 +247,8 @@ q_offset = 0;
       upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
       
        stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-       upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+       upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
     for overlap_comp_no = 1:CC_scan_img.NumObjects
            
 

@@ -1,4 +1,4 @@
- function [rgb_SUImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3( image,end_stage,StabilityPredictor )
+ function [rgb_StableImages,NUM_BIN_IMAGES,BinSizes,MAX_DISTANCE] = Algo2001_3( image,end_stage,StabilityPredictor )
   %reduced = 186;
  
 
@@ -61,26 +61,23 @@
     
     q_offset = q_offset+2*main_offset-1;
  end
- 
- 
- stage = 2;
+%  
+%  figure('Name','Stage One')
+%  imshow(image)
+
+stage = 2;
  if stage>end_stage
-    rgb_SUImages = rgb_BinImages;
+    rgb_StableImages = rgb_BinImages;
  else
      stage = 2
      fprintf("\nStabilizing Images....");
      rgb_StableImages = removeUnstableComponents(rgb_BinImages,MAX_DISTANCE,BinSizes,StabilityCheckMatrix,BinMatrix,18,StabilityPredictor); %CHANGE FOR CHANGE IN PRIMARY FEATURES
-%     rgb_UImages = Uniquize_2Level(rgb_BinImages,BinSizes,MAX_DISTANCE);
-    stage = 3;
-    if stage>end_stage
-        rgb_SUImages = rgb_StableImages;
-    else
-%         stage = 3
-%         rgb_SUImages = Stabilize_2Level(rgb_UImages,BinSizes,MAX_DISTANCE);
-    end
+   
+%      figure('Name','Stage Two')
+%      imshow(image)
  end
 
-
+ end
 
  
 %  cal_set = [1 2 3 4];        %Enter the processing layers in cal set and the the layers to print in print_set
@@ -2763,7 +2760,7 @@
 % imshow(image);
 %  
  
- end
+
      
  
 

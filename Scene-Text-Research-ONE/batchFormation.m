@@ -2,13 +2,14 @@
 
 function batchFormation(dir_in, dir_results, file_ext,out_ext,StabilityPredictor)
 disp('WAIT! Execution begining...');
-global Matrix labels
+global Matrix labels founds  
+ founds = 0;
 TPs = 0;
 PredictedPositives = 0;
 ActualPositives = 0;
 
 %ground_truth_dir = 'E:\ResearchFiles\DATA\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\ICDAR03\ICDAR03\icdar03_ground_truth\';
-ground_truth_dir = 'E:\ResearchFiles\DATA\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_ground_truth\';
+ground_truth_dir = 'D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_ground_truth\';
 
 
 % list of files in the directory name with the input file extension

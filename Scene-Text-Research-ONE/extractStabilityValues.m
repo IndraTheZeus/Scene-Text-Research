@@ -55,6 +55,7 @@ training_entry = 0;
 error_figure = false(row,col);
 
 show_img = false(row,col);
+palate = zeros(row,col);
 %Creating labelled images beforehand to speed up process
 %     BWImages = zeros(size(BinImages));
 %
@@ -108,10 +109,10 @@ for i = 1:8 %Must change Loop for change in Bin
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
         stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         
-        palate = zeros(size(img_no));
+        
         for overlap_comp_no = 1:20
             if overlap_comps(1,overlap_comp_no) == 0
                 break;
@@ -308,8 +309,8 @@ for i = 1:8 %Must change Loop for change in Bin
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
         stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
-        lower_check_stats = regionprops(lower_range_check_img,'EulerNumber','Solidity');
-        upper_check_stats = regionprops(upper_range_check_img,'EulerNumber','Solidity');
+        lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
+        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         for overlap_comp_no = 1:20
             if overlap_comps(1,overlap_comp_no) == 0
                 break;
@@ -456,6 +457,7 @@ for i = 1:8 %Must change Loop for change in Bin
             palate(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 1;
             X(training_entry,13) = SWT(palate);
             X(training_entry,16) = eHOG(palate);
+            
             
             palate(:,:) = 0;
             palate(lower_range_check_CC.PixelIdxList{lower_range_overlap_comp(1,1)}) = 1;
