@@ -21,7 +21,7 @@ show_results = false;
     % 6. Density 
     % 7. Del(Change of Density of Bin i - Bin i + SubBin(i-1,i+1))/Density
     % 8. Del(Change of Density of Bin i - Bin i + Bin(i,i-1,i+1))/Density
-    % 9. Number of Pixels
+    % 9. Number of Pixels ratio
     % 10. BinSize
     % 11.Lower Range Increment Check
     % 12. Higher Range Increment Check
@@ -33,6 +33,9 @@ show_results = false;
     % 17. eHOH difference lower range
     % 18. eHOG difference higher range
     
+    % 19. Height Ratio
+    % 20. Width Ratio
+    
     % 13. 1. * 9.
     % 14. 2. * 9.
     % 15. 3. / 10.
@@ -40,7 +43,7 @@ show_results = false;
     % 17. 1. /10.
     % 18. 2. / 10. 
    
-     X = zeros(1,18);
+     X = zeros(1,20);
      training_entry = 1;
      y = false(1,1);
   

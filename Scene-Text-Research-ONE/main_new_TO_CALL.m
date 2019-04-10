@@ -1,9 +1,9 @@
 % 
-%  input_dir = 'D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_test_words\';
-%  GT_dir = 'D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_ground_truth\';
-%  output_dir = 'D:\Indra-scene-text-research-one\DATA\EXCEL_FILES_WITH_FEATURES\';
-% 
-%  ExcelBatchFormation(input_dir,GT_dir,output_dir,'jpg','',false)
+ input_dir = 'D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_test_words\';
+ GT_dir = 'D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_ground_truth\';
+ output_dir = 'D:\Indra-scene-text-research-one\DATA\EXCEL_FILES_WITH_FEATURES\';
+
+ ExcelBatchFormation(input_dir,GT_dir,output_dir,'jpg','',false)
 % % % load('C1.mat')
 %   load('C2.mat')
 % % load('C3.mat')
@@ -19,13 +19,13 @@
 % % load('C13.mat')
 % % load('C14.mat')
 
-load('F1.mat')
-%input_dir = 'E:\ResearchFiles\DATA\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\ICDAR03\ICDAR03\icdar03_test_words\';
-input_dir ='D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_test_words\';
-output_dir = 'D:\Indra-scene-text-research-one\DATA\test_output\';
-% % load('DensityPixelsRemovedEnsemble.mat')
-
-batchFormation(input_dir,strcat(output_dir,'F1\'),'jpg','png',F1)
+% load('F1.mat')
+% %input_dir = 'E:\ResearchFiles\DATA\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\ICDAR03\ICDAR03\icdar03_test_words\';
+% input_dir ='D:\Indra-scene-text-research-one\DATASET-FOR-SCENE-TEXT-TRAINING\Benchmarking_word_image_datasets\Benchmarking_word_image_datasets\SVT10\SVT10\svt10_test_words\';
+% output_dir = 'D:\Indra-scene-text-research-one\DATA\test_output\';
+% % % load('DensityPixelsRemovedEnsemble.mat')
+% 
+% batchFormation(input_dir,strcat(output_dir,'F1\'),'jpg','png',F1)
 % % % batchFormation('E:\ResearchFiles\DATA\test_input\','E:\ResearchFiles\DATA\test_output\C1\','png','png',AllFeatures_1) 
 % batchFormation(input_dir,strcat(output_dir,'C2\'),'jpg','png',AllFeatures_2)
 % % batchFormation('E:\ResearchFiles\DATA\test_input\','E:\ResearchFiles\DATA\test_output\C3\','png','png',Removed3_1)

@@ -21,7 +21,7 @@ show_results = false;
 % 6. Density
 % 7. Del(Change of Density of Bin i - Bin i + SubBin(i-1,i+1))/Density
 % 8. Del(Change of Density of Bin i - Bin i + Bin(i,i-1,i+1))/Density
-% 9. Number of Pixels
+% 9. Number of Pixels Ratio
 % 10. BinSize
 % 11.Lower Range Increment Check  (Eliminate)
 % 12. Higher Range Increment Check (Eliminate)
@@ -32,6 +32,9 @@ show_results = false;
 % 16. eHOG
 % 17. eHOH difference lower range
 % 18. eHOG difference higher range
+
+% 19. Height Ratio
+% 20. Width Ratio
 
 %Secondary Features
 % 13. 1. * 9.
@@ -44,7 +47,7 @@ show_results = false;
 % BinImages = Uniquize_2Level(BinImages,BinSizes,BinSizes,MAX_DISTANCE);
 
 y = false(1,1);
-X = zeros(1,18);
+X = zeros(1,20);
 training_entry = 0;
 
 
@@ -108,7 +111,7 @@ for i = 1:8 %Must change Loop for change in Bin
         lower_range_bwimage = lower_range_bwimages(:,:,img_no);
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
-        stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
+        stats = regionprops(CC_scan_img,'EulerNumber','Solidity','BoundingBox');
         lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
         upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         
@@ -192,16 +195,25 @@ for i = 1:8 %Must change Loop for change in Bin
                 end
                 
             else
-                if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
-                    training_entry = training_entry - 1;
-                    continue;
-                else
+%                 if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
+%                     training_entry = training_entry - 1;
+%                     continue;
+%                 else
                     y(training_entry,1) = 0;
-                end
+%                 end
                 
             end
             
-            X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)});
+%             %Erase the components
+%               scan_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+%              label_scan_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+% %              upper_range_check_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              lower_range_check_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              upper_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              lower_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+            
+            
+            X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)})/(row*col);
             
             X(training_entry,10) = BinSizes(i);
             
@@ -276,8 +288,19 @@ for i = 1:8 %Must change Loop for change in Bin
             X(training_entry,15) = SWT(palate) - X(training_entry,13) ;
             X(training_entry,18) = eHOG(palate) - X(training_entry,16);
             
+            X(training_entry,19) = stats(overlap_comps(1,overlap_comp_no)).BoundingBox(4)/row;
+            
+            X(training_entry,20) = stats(overlap_comps(1,overlap_comp_no)).BoundingBox(3)/col;
+            
         end
         
+%                    %Erase the components
+%              scan_imgs(:,:,img_no) =  scan_img;
+%              label_scan_imgs(:,:,img_no) = label_scan_img;
+% %              upper_range_check_imgs(:,:,img_no) = upper_range_check_img; 
+% %              lower_range_check_imgs(:,:,img_no) = lower_range_check_img;
+% %              upper_range_bwimages(:,:,img_no) = upper_range_bwimage; 
+% %              lower_range_bwimages(:,:,img_no) = lower_range_bwimage;
         
     end
     
@@ -308,7 +331,7 @@ for i = 1:8 %Must change Loop for change in Bin
         lower_range_bwimage = lower_range_bwimages(:,:,img_no);
         upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
         
-        stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
+        stats = regionprops(CC_scan_img,'EulerNumber','Solidity','BoundingBox');
         lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
         upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
         for overlap_comp_no = 1:20
@@ -391,16 +414,24 @@ for i = 1:8 %Must change Loop for change in Bin
                 end
                 
             else
-                if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
-                    training_entry = training_entry - 1;
-                    continue;
-                else
+%                 if lower_range_comp_no_pixels <= ((1+max_growth)*comp_num_of_pixels) && upper_range_comp_no_pixels <= ((1+(max_growth*(1+max_growth)))*comp_num_of_pixels)
+%                     training_entry = training_entry - 1;
+%                     continue;
+%                 else
                     y(training_entry,1) = 0;
-                end
+%                 end
                 
             end
-            
-            X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)});
+%             
+%              %Erase the components
+%               scan_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+%              label_scan_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+% %              upper_range_check_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              lower_range_check_img(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              upper_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0; 
+% %              lower_range_bwimage(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)}) = 0;
+%             
+            X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comps(1,overlap_comp_no)})/(row*col);
             
             
             X(training_entry,10) = BinSizes(i);
@@ -469,11 +500,19 @@ for i = 1:8 %Must change Loop for change in Bin
             X(training_entry,15) = SWT(palate) - X(training_entry,13) ;
             X(training_entry,18) = eHOG(palate) - X(training_entry,16);
             
+            X(training_entry,19) = stats(overlap_comps(1,overlap_comp_no)).BoundingBox(4)/row;
             
-            
+            X(training_entry,20) = stats(overlap_comps(1,overlap_comp_no)).BoundingBox(3)/col;
             
         end
         
+%         %Erase the components
+%         scan_imgs(:,:,img_no) =  scan_img;
+%         label_scan_imgs(:,:,img_no) = label_scan_img;
+% %         upper_range_check_imgs(:,:,img_no) = upper_range_check_img;
+% %         lower_range_check_imgs(:,:,img_no) = lower_range_check_img;
+% %         upper_range_bwimages(:,:,img_no) = upper_range_bwimage;
+% %         lower_range_bwimages(:,:,img_no) = lower_range_bwimage;
         
     end
     

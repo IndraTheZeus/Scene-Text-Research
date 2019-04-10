@@ -16,7 +16,7 @@ function [X,y] = extractStabilityValuesNonText(region,BinImages,NUM_BIN_IMAGES,B
     % 6. Density 
     % 7. Del(Change of Density of Bin i - Bin i + SubBin(i-1,i+1))/Density
     % 8. Del(Change of Density of Bin i - Bin i + Bin(i,i-1,i+1))/Density
-    % 9. Number of Pixels
+    % 9. Number of Pixels ratio
     % 10. BinSize
     % 11.Lower Range Increment Check  (Eliminate)
     % 12. Higher Range Increment Check (Eliminate)
@@ -27,6 +27,9 @@ function [X,y] = extractStabilityValuesNonText(region,BinImages,NUM_BIN_IMAGES,B
     % 16. eHOG
     % 17. eHOH difference lower range
     % 18. eHOG difference higher range
+    
+    % 19. Height Ratio
+    % 20. Width Ratio
     
     %Secondary Features
     % 13. 1. * 9.
@@ -39,7 +42,7 @@ function [X,y] = extractStabilityValuesNonText(region,BinImages,NUM_BIN_IMAGES,B
            % BinImages = Uniquize_2Level(BinImages,BinSizes,BinSizes,MAX_DISTANCE);
   
   y = false(1,1);
-  X = zeros(1,18);
+  X = zeros(1,20);
   training_entry = 0; 
  
    
@@ -95,7 +98,7 @@ q_offset = 0;
       lower_range_bwimage = lower_range_bwimages(:,:,img_no);
       upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
       
-       stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
+       stats = regionprops(CC_scan_img,'EulerNumber','Solidity','BoundingBox');
         lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
        
@@ -172,7 +175,7 @@ q_offset = 0;
 
  
               
-             X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comp_no});
+             X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comp_no})/(row*col);
                
              X(training_entry,10) = BinSizes(i);
              
@@ -222,6 +225,10 @@ q_offset = 0;
         X(training_entry,15) = SWT(palate) - X(training_entry,13) ;
         X(training_entry,18) = eHOG(palate) - X(training_entry,16);
         
+        X(training_entry,19) = stats(overlap_comp_no).BoundingBox(4)/row;
+        
+        X(training_entry,20) = stats(overlap_comp_no).BoundingBox(3)/col;
+        
     end
    
   
@@ -246,12 +253,12 @@ q_offset = 0;
       lower_range_bwimage = lower_range_bwimages(:,:,img_no);
       upper_range_bwimage =  upper_range_bwimages(:,:,img_no);
       
-       stats = regionprops(CC_scan_img,'EulerNumber','Solidity');
+       stats = regionprops(CC_scan_img,'EulerNumber','Solidity','BoundingBox');
         lower_check_stats = regionprops(lower_range_check_CC,'EulerNumber','Solidity');
        upper_check_stats = regionprops(upper_range_check_CC,'EulerNumber','Solidity');
     for overlap_comp_no = 1:CC_scan_img.NumObjects
            
-
+% 
            if(sum(sum(region(CC_scan_img.PixelIdxList{overlap_comp_no}))) ~= 0)
               continue;
           end
@@ -320,7 +327,7 @@ q_offset = 0;
             
               y(training_entry,1) = 0;
 
-             X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comp_no});
+             X(training_entry,9) = numel(CC_scan_img.PixelIdxList{overlap_comp_no})/(row*col);
 
            X(training_entry,10) = BinSizes(i);
 
@@ -361,7 +368,9 @@ q_offset = 0;
         X(training_entry,15) = SWT(palate) - X(training_entry,13) ;
         X(training_entry,18) = eHOG(palate) - X(training_entry,16);
         
-          
+        X(training_entry,19) = stats(overlap_comp_no).BoundingBox(4)/row;
+        
+        X(training_entry,20) = stats(overlap_comp_no).BoundingBox(3)/col;
         
         
     end
