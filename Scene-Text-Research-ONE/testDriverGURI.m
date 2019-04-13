@@ -18,7 +18,7 @@ function [output] = testDriverGURI(MAX_DISTANCE)
            
         lower_bin_limit = (img_no-q_offset-1)*BinSizes(1,i);
         k = ceil((BinSizes(1,i)/2)) -1;
-        upper_bin_limit = min(440,k+(img_no-q_offset)*BinSizes(1,i));
+        upper_bin_limit = min(MAX_DISTANCE,k+(img_no-q_offset)*BinSizes(1,i));
         [upper_range_check_img_no_1,upper_range_check_img_no_2,j] = GetUpperRangeImage(lower_bin_limit,upper_bin_limit,i,q_offset,BinSizes,MAX_DISTANCE);
         
         
@@ -86,7 +86,7 @@ function [output] = testDriverGURI(MAX_DISTANCE)
        for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1)
             k = ceil((BinSizes(i)/2)) -1;
             lower_bin_limit = k+(img_no-q_offset-main_offset-1)*BinSizes(1,i);     
-            upper_bin_limit = min(440,(img_no-q_offset-main_offset+1)*BinSizes(1,i));
+            upper_bin_limit = min(MAX_DISTANCE,(img_no-q_offset-main_offset+1)*BinSizes(1,i));
             [upper_range_check_img_no_1,upper_range_check_img_no_2,j] = GetUpperRangeImage(lower_bin_limit,upper_bin_limit,i,q_offset,BinSizes,MAX_DISTANCE);
       
 

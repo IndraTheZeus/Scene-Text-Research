@@ -4,7 +4,7 @@ function ExcelBatchFormation(dir_in,GT_dir, dir_results, file_ext,excel_file_ext
 disp('WAIT! Execution begining...');
 
 append_mode = false;
-output_filename = strcat(dir_results,"StabilityFeatures(0.5,0.5).xlsx");
+output_filename = strcat(dir_results,"StabilityFeatures(0.5,0.5)_IC03.xlsx");
 
 % list of files in the directory name with the input file extension
 listing = dir(strcat(dir_in,'*.',file_ext));
@@ -27,7 +27,7 @@ fprintf('\nTotal number of pages = %d\n', num_pages);
      FeatureLabel = false(1,1);
  f_init = false;
 % process all pages in the directory
-for i = 1:num_pages
+for i = 1:2:num_pages
   %if((i>=120)&&(i<125))  
     fprintf('\nProcessing page No: %d\n', i);    
     
@@ -69,7 +69,7 @@ for i = 1:num_pages
          FeatureLabel(training_entry:(training_entry+rM-1),:) = Labelsy;
          training_entry = training_entry+rM;
          
-         if mod(i,10) == 0
+         if mod((i-1)/2,10) == 0
               fprintf("\nWriting Records till: %d ,total training entries: %d....\n",i,training_entry);
               Data = [FeatureLabel FeatureSet];
               xlswrite(output_filename,Data);   

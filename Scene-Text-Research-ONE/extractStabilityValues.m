@@ -77,7 +77,7 @@ palate = zeros(row,col);
 min_deviation_set = 1; %Since 1st half not used
 
 q_offset = 0;
-for i = 1:8 %Must change Loop for change in Bin
+for i = 1:9 %Must change Loop for change in Bin
     if min_deviation_set == 0
         fprintf("\nNo SUITABLE Component found\n");
         break;

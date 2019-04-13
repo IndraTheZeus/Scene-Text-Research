@@ -76,11 +76,11 @@ show_results = false;
     upper_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
     lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
     
-      StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
+      StabilityCheckMatrix = testDriverGURI(MAX_DISTANCE); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
       BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
     fprintf("\n ----- Processing ----");
    q_offset = 0;
-   for i = 1:8
+   for i = 1:9
          main_offset = ceil(MAX_DISTANCE/BinSizes(i));
 %        k = ceil((BinSizes(i)/2)) -1;
      for img_no = (q_offset+1):(q_offset+main_offset) 
