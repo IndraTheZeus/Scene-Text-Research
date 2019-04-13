@@ -1,6 +1,6 @@
-function [output] = testDriverGURI()
+function [output] = testDriverGURI(MAX_DISTANCE)
 
-   MAX_DISTANCE = 255*sqrt(3);
+%    MAX_DISTANCE = 255*sqrt(3);
    BinSizes = generateBins(MAX_DISTANCE);
    NUM_BIN_IMAGES = calculateNumBins_2Level(BinSizes,MAX_DISTANCE);
    output_size = calculateNumBins_2Level(BinSizes(1:8),MAX_DISTANCE);  %Must be changed if BinSizes Changes
@@ -12,7 +12,7 @@ function [output] = testDriverGURI()
    q_offset = 0;
    insert = 1;
  
-   for i = 1:8                         %%LOOP TO CHANGE FOR DIFFERENT BIN SIZES    
+   for i = 1:9                        %%LOOP TO CHANGE FOR DIFFERENT BIN SIZES    
        main_offset = ceil(MAX_DISTANCE/BinSizes(i)); 
        for img_no = (q_offset+1):(q_offset+main_offset)
            

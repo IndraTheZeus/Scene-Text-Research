@@ -57,7 +57,7 @@ lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
 
 q_offset = 0;
 
-for i = 1:8
+for i = 1:9
     main_offset = ceil(MAX_DISTANCE/BinSizes(i));
     %        k = ceil((BinSizes(i)/2)) -1;
     for img_no = (q_offset+1):(q_offset+main_offset)
@@ -261,7 +261,7 @@ show_img = false(row,col);
 %% Next we extract the Values for each Bin. Correct Components those with pixels within min Variance In Component Size
 fprintf(" --- Stabilizing ----- \n");
 q_offset = 0;
-for i = 1:8 %Must change Loop for change in Bin
+for i = 1:9 %Must change Loop for change in Bin
     
     main_offset = ceil(MAX_DISTANCE/BinSizes(i));
     k = ceil((BinSizes(i)/2)) -1;

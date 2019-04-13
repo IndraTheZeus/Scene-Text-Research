@@ -10,7 +10,7 @@
  [row,col,~] = size(image);
  
   BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
-  StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
+  StabilityCheckMatrix = testDriverGURI(MAX_DISTANCE); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
  rgb_BinImages = false(row,col,NUM_BIN_IMAGES);
  
  
@@ -61,9 +61,35 @@
     
     q_offset = q_offset+2*main_offset-1;
  end
-%  
-%  figure('Name','Stage One')
-%  imshow(image)
+
+ % rgb_BinImages = false(row,col,1);
+% entry = 1;
+% DIS = DistanceMatrix(:);
+% 
+% idxes = zeros(size(DIS));
+% for i = 1:numel(BinSizes)
+%     [idxes] = Binning(DIS,idxes,BinSizes(1,i));
+%     
+%     
+%     divs = unique(idxes);
+%     
+%     for n = 1:numel(divs)
+%         new_map = false(row,col);
+%         p = 1;
+%         for c = 1:col
+%             for r = 1:row
+%                 if idxes(p) == divs(n)
+%                     new_map(r,c) = 1;
+%                 end
+%                 p = p+1;
+%             end
+%         end
+%         rgb_BinImages(:,:,entry) = new_map;
+%         entry = entry +1;
+%     end
+% end
+% %  figure('Name','Stage One')
+% %  imshow(image)
 
 stage = 2;
  if stage>end_stage
@@ -79,6 +105,32 @@ stage = 2;
 
  end
 
+ 
+ function [final_indexes] = Binning(Arr,idxes,BinSize)
+ 
+     if (max(Arr) - min(Arr)) <= BinSize
+         final_indexes = idxes;
+         return
+     end
+     
+     [idxes] = kmeans(Arr,2);
+    
+     [idxes1] = Binning(Arr(idxes == 1),idxes(idxes == 1),BinSize);
+     
+     [idxes2] = Binning(Arr(idxes == 2),idxes(idxes == 2),BinSize);
+     
+     idxes2 = idxes2 + max(idxes1); 
+     
+    
+     final_indexes(idxes == 1) = idxes1;
+
+ 
+     final_indexes(idxes == 2) = idxes2;
+
+      
+%      final_indexes = idxes;
+ 
+ end
  
 %  cal_set = [1 2 3 4];        %Enter the processing layers in cal set and the the layers to print in print_set
 % % print_set =[1 2 3 4];

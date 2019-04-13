@@ -11,6 +11,6 @@ function [BinSizes] = generateBins(MAX_DISTANCE)
 %          i = i+1;
 %       end
 %       BinSizes = BinSizes(1,1:(i-1));
-BinSizes = [22 43 66 83 102 126 139 157 191 210 237];
-%BinSizes = [22 35 44 55 68 77 88 99 110 121 135 154 167];
+%BinSizes = [22 43 66 83 102 126 139 157 191 210 237];
+BinSizes = [22 35 44 55 68 77 88 99 110 121 135 154 167];
 end
