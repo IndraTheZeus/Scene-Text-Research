@@ -1,6 +1,6 @@
 function [images] = ReduceToMainCCs(images)
 
-width_Thres = 0;
+width_Thres = 0.025;
 height_Thres = 0.2;
 area_Thres = 0;
 

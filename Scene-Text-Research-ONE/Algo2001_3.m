@@ -21,12 +21,12 @@
  for r = 1:row
      for c = 1:col
         if size(image,3) == 1
-            DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,1),image(r,c,1)));
+            DistanceMatrix(r,c) = image(r,c)*1.7;
             if DistanceMatrix(r,c) > MAX_DISTANCE
                error("MAx Distance Incorrect"); 
             end
         else
-            DistanceMatrix(r,c) = image(r,c)*1.7;
+            DistanceMatrix(r,c) = floor(rgbDistance(image(r,c,1),image(r,c,2),image(r,c,3)));
             if DistanceMatrix(r,c) > MAX_DISTANCE
                error("MAx Distance Incorrect"); 
             end
@@ -67,8 +67,11 @@
     
     q_offset = q_offset+2*main_offset-1;
  end
+ 
 
- % rgb_BinImages = false(row,col,1);
+ 
+
+%  rgb_BinImages = false(row,col,1);
 % entry = 1;
 % DIS = DistanceMatrix(:);
 % 
@@ -94,8 +97,8 @@
 %         entry = entry +1;
 %     end
 % end
-% %  figure('Name','Stage One')
-% %  imshow(image)
+
+ 
 
 stage = 2;
  if stage>end_stage
@@ -137,6 +140,214 @@ stage = 2;
 %      final_indexes = idxes;
  
  end
+ 
+ %============================
+ 
+%  
+%    fprintf("\n----- Preprocessing ----\n");
+% scan_imgs = false(row,col,NUM_BIN_IMAGES);
+% label_scan_imgs = zeros(row,col,NUM_BIN_IMAGES);
+% upper_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+% lower_range_check_imgs = false(row,col,NUM_BIN_IMAGES);
+% upper_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+% lower_range_bwimages = zeros(row,col,NUM_BIN_IMAGES);
+% 
+% 
+% %       StabilityCheckMatrix = testDriverGURI(); % CHANGE FUNCTION IF DISTANCE CALCULATION CHANGES
+% %       BinMatrix = printBinAllocations(BinSizes,MAX_DISTANCE,NUM_BIN_IMAGES);
+% 
+% BinImages = rgb_BinImages;
+% q_offset = 0;
+% 
+% for i = 1:9
+%     main_offset = ceil(MAX_DISTANCE/BinSizes(i));
+%     %        k = ceil((BinSizes(i)/2)) -1;
+%     for img_no = (q_offset+1):(q_offset+main_offset)
+%         if img_no ~= (q_offset+main_offset)
+%             
+%             scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no+main_offset))));
+% %                match = true;
+% %             else
+% %                 match = false;
+% %             end
+%             
+% %             if match == false
+% %                 img_no
+% %                 error("Mismatch");
+% %             end
+%             
+%         else
+%             scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)));
+% %                match = true;
+% %             else
+% %                 match = false;
+% %             end
+%             
+% %             if match == false
+% %                 error("Mismatch");
+% %             end
+%         end
+%         label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+% %         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         
+%         lower_overlap_bin_no = img_no + main_offset-1;
+%         upper_overlap_bin_no = img_no+main_offset;
+%         if((img_no > NUM_BIN_IMAGES) || ((img_no+main_offset)> NUM_BIN_IMAGES && img_no~=q_offset+main_offset))
+%             fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);
+%         end
+%         %The Smaller range against which to check stability
+%         if img_no > q_offset+1 && img_no<(q_offset+main_offset)
+%             lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+% %                 match = true;
+% %             else
+% %                 match = false;
+% %             end
+%             
+% %             if match == false
+% %                 error("Mismatch");
+% %             end
+%         else
+%             if img_no == q_offset+main_offset
+%                 lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+ BinImages(:,:,lower_overlap_bin_no)));
+% %                     match = true;
+% %                 else
+% %                     match = false;
+% %                 end
+%                 
+% %                 if match == false
+% %                     error("Mismatch");
+% %                 end
+%             else
+%                 lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,upper_overlap_bin_no)));
+% %                     match = true;
+% %                 else
+% %                     match = false;
+% %                 end
+%                 
+% %                 if match == false
+% %                     error("Mismatch");
+% %                 end
+%             end
+%         end
+%         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
+%         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
+%         upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+% %         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         
+%         lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         
+%         upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%     end
+%     
+%     for img_no = (q_offset+main_offset+1):(q_offset+2*main_offset-1)
+%         scan_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,(img_no-main_offset+1))));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             img_no
+% %             error("Mismatch");
+% %         end
+%         
+%         
+%         label_scan_imgs(:,:,img_no) = bwlabel(scan_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         
+%         %The Smaller range against which to check stability
+%         
+%         lower_overlap_bin_no = img_no -main_offset;
+%         upper_overlap_bin_no = img_no-main_offset+1;
+%         if((img_no > NUM_BIN_IMAGES) || (lower_overlap_bin_no> NUM_BIN_IMAGES))
+%             fprintf("\nLoop Error,img_value >134;printing loop at Bin Index: %d main_offset = %d ,q_offset = %d\n" ,main_offset,q_offset);
+%         end
+%         lower_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,img_no)+BinImages(:,:,lower_overlap_bin_no) + BinImages(:,:,upper_overlap_bin_no)));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+% %         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         upper_range_check_img_no_1= StabilityCheckMatrix(img_no,6);
+%         upper_range_check_img_no_2= StabilityCheckMatrix(img_no,7);
+%         upper_range_check_imgs(:,:,img_no) = ReduceToMainCCs(logical(BinImages(:,:,upper_range_check_img_no_1)+BinImages(:,:,upper_range_check_img_no_2)));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         lower_range_bwimages(:,:,img_no) = bwlabel(lower_range_check_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+%         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%         upper_range_bwimages(:,:,img_no) = bwlabel(upper_range_check_imgs(:,:,img_no));
+% %             match = true;
+% %         else
+% %             match = false;
+% %         end
+% %         
+% %         if match == false
+% %             error("Mismatch");
+% %         end
+%     end
+%     
+%     q_offset = q_offset + 2*main_offset - 1;
+% end
+% 
+% rgb_BinImages = scan_imgs;
+ 
+ 
+ 
+ %==================
+ 
  
 %  cal_set = [1 2 3 4];        %Enter the processing layers in cal set and the the layers to print in print_set
 % % print_set =[1 2 3 4];

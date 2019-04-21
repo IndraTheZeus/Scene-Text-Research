@@ -7,7 +7,7 @@ function [out_img] =  BackGroundEliminate(images)
        
        Border_Sum = sum(sum(img(1,:))) + sum(sum(img(row,:))) + sum(sum(img(:,1))) + sum(sum(img(:,col)));
        
-       if Border_Sum < (row+col)
+       if Border_Sum < 0.1*(row+col)
            out_img(:,:,i) = img;
        end
        
